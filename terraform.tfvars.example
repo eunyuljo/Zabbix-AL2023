@@ -1,0 +1,42 @@
+# Terraform Variables Example
+# Copy this file to terraform.tfvars and modify the values as needed
+
+# AWS Configuration
+aws_region = "ap-northeast-2"
+
+# Project Information
+project_name = "zabbix"
+environment  = "dev"  # dev, staging, prod
+
+# Network Configuration
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.20.0/24"]
+availability_zones   = ["ap-northeast-2a", "ap-northeast-2b"]
+
+# Security Configuration
+# IMPORTANT: For production, restrict this to your specific IP ranges
+allowed_cidr_blocks = ["0.0.0.0/0"]  # Example: ["123.456.789.0/24", "203.0.113.0/24"]
+
+# EC2 Configuration
+instance_type = "t3.medium"  # t3.small for dev, t3.medium+ for prod
+key_pair_name = "zabbix-key"  # Make sure this key pair exists in AWS
+
+# Database Configuration (Sensitive - Keep these secure!)
+mysql_root_password = "MySecureRootP@ssw0rd2023!"
+zabbix_db_password  = "MySecureZabbixP@ssw0rd2023!"
+
+# Example configurations for different environments:
+
+# Development Environment
+# instance_type = "t3.small"
+# environment   = "dev"
+
+# Staging Environment
+# instance_type = "t3.medium"
+# environment   = "staging"
+
+# Production Environment
+# instance_type = "t3.large"
+# environment   = "prod"
+# allowed_cidr_blocks = ["203.0.113.0/24"]  # Your office IP range
