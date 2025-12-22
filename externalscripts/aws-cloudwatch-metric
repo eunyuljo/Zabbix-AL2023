@@ -1,0 +1,161 @@
+#!/bin/bash
+
+################################################################################
+# AWS CloudWatch Metric Collector - ExternalScript Version
+#
+# 개선 사항:
+# - 유연한 파라미터 구조 (모든 AWS 서비스/메트릭 지원)
+# - 다양한 통계 타입 지원 (Average, Maximum, Minimum, Sum, SampleCount)
+# - 향상된 에러 핸들링 및 로깅
+# - Cross-account 역할 지원
+#
+# 사용법:
+#   aws-cloudwatch-metric <ACCOUNT_ID> <REGION> <NAMESPACE> <METRIC_NAME> \
+#                          <STATISTIC> <DIMENSIONS> [ROLE_ARN]
+#
+# 예시:
+#   aws-cloudwatch-metric 123456789012 ap-northeast-2 AWS/EC2 CPUUtilization \
+#                         Average "Name=InstanceId,Value=i-1234567890" \
+#                         "arn:aws:iam::123456789012:role/ZabbixMonitoringRole"
+#
+# 지원 Namespaces:
+#   - AWS/EC2, AWS/RDS, AWS/Lambda, AWS/ELB, AWS/ApplicationELB
+#   - AWS/S3, AWS/DynamoDB, AWS/ECS, AWS/EKS 등 모든 CloudWatch 서비스
+################################################################################
+
+set -e
+
+# 설정
+LOG_FILE="/var/log/zabbix/aws-metric-collector.log"
+EXTERNAL_ID="zabbix-monitoring-unique-key"
+CACHE_DIR="/tmp/zabbix-aws-cache"
+CACHE_TTL=60  # 캐시 유효 시간 (초)
+
+# 파라미터
+ACCOUNT_ID=$1
+REGION=${2:-"ap-northeast-2"}
+NAMESPACE=$3
+METRIC_NAME=$4
+STATISTIC=${5:-"Average"}
+DIMENSIONS=$6
+ROLE_ARN=$7
+
+
+# 로깅 함수
+log() {
+    local level=$1
+    shift
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $*" >> "$LOG_FILE" 2>/dev/null || true
+}
+
+# 에러 처리 함수
+error_exit() {
+    log "ERROR" "$1"
+    echo "ERROR: $1" >&2
+    exit 1
+}
+
+# 파라미터 검증
+if [[ -z "$ACCOUNT_ID" || -z "$NAMESPACE" || -z "$METRIC_NAME" ]]; then
+    error_exit "Required parameters missing. Usage: $0 <ACCOUNT_ID> <REGION> <NAMESPACE> <METRIC_NAME> <STATISTIC> <DIMENSIONS> [ROLE_ARN]"
+fi
+
+# 통계 타입 검증
+case "$STATISTIC" in
+    Average|Maximum|Minimum|Sum|SampleCount)
+        ;;
+    *)
+        error_exit "Invalid statistic: $STATISTIC. Must be one of: Average, Maximum, Minimum, Sum, SampleCount"
+        ;;
+esac
+
+log "INFO" "Collecting metric: Account=$ACCOUNT_ID, Region=$REGION, Namespace=$NAMESPACE, Metric=$METRIC_NAME, Statistic=$STATISTIC"
+
+# 캐시 키 생성
+CACHE_KEY=$(echo "${ACCOUNT_ID}_${REGION}_${NAMESPACE}_${METRIC_NAME}_${STATISTIC}_${DIMENSIONS}" | md5sum | awk '{print $1}')
+CACHE_FILE="${CACHE_DIR}/${CACHE_KEY}"
+
+# 캐시 디렉토리 생성
+mkdir -p "$CACHE_DIR" 2>/dev/null || true
+
+# 캐시 확인 (선택적 - 성능 최적화)
+if [[ -f "$CACHE_FILE" ]]; then
+    CACHE_AGE=$(($(date +%s) - $(stat -c %Y "$CACHE_FILE" 2>/dev/null || echo 0)))
+    if [[ $CACHE_AGE -lt $CACHE_TTL ]]; then
+        log "INFO" "Using cached value (age: ${CACHE_AGE}s)"
+        cat "$CACHE_FILE"
+        exit 0
+    fi
+fi
+
+# Cross-account 역할 assume
+if [[ -n "$ROLE_ARN" ]]; then
+    log "INFO" "Assuming role: $ROLE_ARN"
+
+    TEMP_CREDS=$(aws sts assume-role \
+        --role-arn "$ROLE_ARN" \
+        --role-session-name "zabbix-metrics-$(date +%s)" \
+        --external-id "$EXTERNAL_ID" \
+        --duration-seconds 3600 \
+        --output json 2>&1) || error_exit "Failed to assume role $ROLE_ARN: $TEMP_CREDS"
+
+    # 환경 변수 설정
+    export AWS_ACCESS_KEY_ID=$(echo "$TEMP_CREDS" | jq -r '.Credentials.AccessKeyId')
+    export AWS_SECRET_ACCESS_KEY=$(echo "$TEMP_CREDS" | jq -r '.Credentials.SecretAccessKey')
+    export AWS_SESSION_TOKEN=$(echo "$TEMP_CREDS" | jq -r '.Credentials.SessionToken')
+
+    log "INFO" "Successfully assumed role"
+fi
+
+# 시간 설정 (최근 10분)
+END_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S")
+START_TIME=$(date -u -d '10 minutes ago' +"%Y-%m-%dT%H:%M:%S")
+
+# Dimensions 파싱
+DIMENSION_ARGS=""
+if [[ -n "$DIMENSIONS" ]]; then
+    # 여러 dimension 지원: "Name=InstanceId,Value=i-123 Name=Device,Value=/dev/xvda"
+    DIMENSION_ARGS="--dimensions $DIMENSIONS"
+    log "INFO" "Using dimensions: $DIMENSIONS"
+fi
+
+# CloudWatch 메트릭 조회
+log "INFO" "Querying CloudWatch: StartTime=$START_TIME, EndTime=$END_TIME"
+
+RESULT=$(aws cloudwatch get-metric-statistics \
+    --region "$REGION" \
+    --namespace "$NAMESPACE" \
+    --metric-name "$METRIC_NAME" \
+    $DIMENSION_ARGS \
+    --start-time "$START_TIME" \
+    --end-time "$END_TIME" \
+    --period 60 \
+    --statistics "$STATISTIC" \
+    --output json 2>&1) || error_exit "Failed to get metric statistics: $RESULT"
+
+# 결과 파싱
+LATEST_VALUE=$(echo "$RESULT" | jq -r --arg stat "$STATISTIC" '
+    .Datapoints |
+    sort_by(.Timestamp) |
+    reverse |
+    if length > 0 then .[0][$stat] // "0" else "0" end
+')
+
+# 결과 검증
+if [[ "$LATEST_VALUE" == "null" || -z "$LATEST_VALUE" ]]; then
+    log "WARN" "No datapoints found, returning 0"
+    LATEST_VALUE="0"
+fi
+
+log "INFO" "Metric value: $LATEST_VALUE"
+
+# 캐시에 저장
+echo "$LATEST_VALUE" > "$CACHE_FILE" 2>/dev/null || true
+
+# 결과 출력
+echo "$LATEST_VALUE"
+
+# 임시 자격 증명 정리
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+
+exit 0
