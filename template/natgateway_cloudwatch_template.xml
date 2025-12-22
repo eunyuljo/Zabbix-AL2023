@@ -152,7 +152,7 @@
       <macros>
         <macro>
           <macro>{$ACCOUNT_ID}</macro>
-          <value>626635430480</value>
+          <value>123456789012</value>
           <description>AWS Account ID for CloudWatch access</description>
         </macro>
         <macro>
@@ -172,7 +172,7 @@
         </macro>
         <macro>
           <macro>{$ROLE_ARN}</macro>
-          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <value>arn:aws:iam::123456789012:role/ZabbixMonitoringRole</value>
           <description>IAM Role ARN for CloudWatch access</description>
         </macro>
         <macro>
