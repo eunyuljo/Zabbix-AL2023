@@ -22,7 +22,7 @@
           <uuid>21ca056b12b04496a28c7044716be552</uuid>
           <name>AWS EC2 CPU Utilization</name>
           <type>EXTERNAL</type>
-          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},{$DIMENSIONS},{$ROLE_ARN}]</key>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}]</key>
           <delay>1m</delay>
           <history>90d</history>
           <trends>365d</trends>
@@ -32,14 +32,14 @@
           <triggers>
             <trigger>
               <uuid>e7e4f0730857462eaf56c2648ec2253e</uuid>
-              <expression>last(/Template Megazone AWS EC2 CloudWatch v2/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},{$DIMENSIONS},{$ROLE_ARN}])&gt;{$AWS.CPU.WARN.THRESHOLD}</expression>
+              <expression>last(/Template Megazone AWS EC2 CloudWatch v2/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}])&gt;{$AWS.CPU.WARN.THRESHOLD}</expression>
               <name>AWS EC2: High CPU usage (over {$AWS.CPU.WARN.THRESHOLD}%)</name>
               <priority>WARNING</priority>
               <description>CPU utilization is above warning threshold</description>
             </trigger>
             <trigger>
               <uuid>c71e81dc4d364184b590f6eda9fa5e3c</uuid>
-              <expression>last(/Template Megazone AWS EC2 CloudWatch v2/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},{$DIMENSIONS},{$ROLE_ARN}])&gt;{$AWS.CPU.HIGH.THRESHOLD}</expression>
+              <expression>last(/Template Megazone AWS EC2 CloudWatch v2/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}])&gt;{$AWS.CPU.HIGH.THRESHOLD}</expression>
               <name>AWS EC2: Critical CPU usage (over {$AWS.CPU.HIGH.THRESHOLD}%)</name>
               <priority>HIGH</priority>
               <description>CPU utilization is above critical threshold</description>
@@ -50,7 +50,7 @@
           <uuid>9136834651d245719ac05e2118ae86a9</uuid>
           <name>AWS EC2 Network In</name>
           <type>EXTERNAL</type>
-          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkIn,Sum,{$DIMENSIONS},{$ROLE_ARN}]</key>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkIn,Sum,"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}]</key>
           <delay>1m</delay>
           <history>90d</history>
           <trends>365d</trends>
@@ -62,7 +62,7 @@
           <uuid>364dc9549c6b4c4a935d9176b3f6628b</uuid>
           <name>AWS EC2 Network Out</name>
           <type>EXTERNAL</type>
-          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkOut,Sum,{$DIMENSIONS},{$ROLE_ARN}]</key>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkOut,Sum,"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}]</key>
           <delay>1m</delay>
           <history>90d</history>
           <trends>365d</trends>
@@ -74,7 +74,7 @@
           <uuid>5759cc0aac01418eb6465bf1f42e839c</uuid>
           <name>AWS EC2 Status Check Failed</name>
           <type>EXTERNAL</type>
-          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},StatusCheckFailed,Maximum,{$DIMENSIONS},{$ROLE_ARN}]</key>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},StatusCheckFailed,Maximum,"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}]</key>
           <delay>1m</delay>
           <history>90d</history>
           <value_type>FLOAT</value_type>
@@ -82,7 +82,7 @@
           <triggers>
             <trigger>
               <uuid>e8860390aece4897b4087fe84f15adcb</uuid>
-              <expression>last(/Template Megazone AWS EC2 CloudWatch v2/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},StatusCheckFailed,Maximum,{$DIMENSIONS},{$ROLE_ARN}])&lt;&gt;0</expression>
+              <expression>last(/Template Megazone AWS EC2 CloudWatch v2/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},StatusCheckFailed,Maximum,"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}])&lt;&gt;0</expression>
               <name>AWS EC2: Status check failed</name>
               <priority>HIGH</priority>
               <description>EC2 instance status check has failed</description>
@@ -93,7 +93,7 @@
           <uuid>5904239a250a4ff0ad0492c7bb3b419d</uuid>
           <name>AWS EC2 Disk Read Bytes</name>
           <type>EXTERNAL</type>
-          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DiskReadBytes,Sum,{$DIMENSIONS},{$ROLE_ARN}]</key>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DiskReadBytes,Sum,"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}]</key>
           <delay>2m</delay>
           <history>90d</history>
           <trends>365d</trends>
@@ -105,7 +105,7 @@
           <uuid>3833ebd4cc814600a4ab58c407a4aa00</uuid>
           <name>AWS EC2 Disk Write Bytes</name>
           <type>EXTERNAL</type>
-          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DiskWriteBytes,Sum,{$DIMENSIONS},{$ROLE_ARN}]</key>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DiskWriteBytes,Sum,"Name=InstanceId,Value={$INSTANCE_ID}",{$ROLE_ARN}]</key>
           <delay>2m</delay>
           <history>90d</history>
           <trends>365d</trends>
@@ -121,9 +121,9 @@
           <description>AWS Account ID for CloudWatch access</description>
         </macro>
         <macro>
-          <macro>{$DIMENSIONS}</macro>
-          <value>Name=InstanceId,Value=i-xxxxxxxxxxxxxxxxx</value>
-          <description>CloudWatch dimensions for filtering</description>
+          <macro>{$INSTANCE_ID}</macro>
+          <value>i-xxxxxxxxxxxxxxxxx</value>
+          <description>EC2 Instance ID</description>
         </macro>
         <macro>
           <macro>{$NAMESPACE}</macro>
