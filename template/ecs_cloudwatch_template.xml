@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>dca692eaefb64cf592c090f26aec2fde</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>15947af75f254bf886e9715b0a10847a</uuid>
+      <template>Template Megazone AWS ECS CloudWatch</template>
+      <name>Template Megazone AWS ECS CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Cluster Level Metrics -->
+        <item>
+          <uuid>bdd28f9ea46a409b98a055de0edc062a</uuid>
+          <name>AWS ECS Cluster CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Average CPU utilization of all tasks running in the ECS cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>cff95d88eeee4491a8f4807d84ca92a8</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$ECS.CLUSTER.CPU.THRESHOLD}</expression>
+              <name>AWS ECS Cluster: High CPU utilization (over {$ECS.CLUSTER.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>ECS cluster CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>274afe16b9954fbb94692d3047760401</uuid>
+          <name>AWS ECS Cluster Memory Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},MemoryUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Average memory utilization of all tasks running in the ECS cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>864228b7e6454028a7f074345845623d</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},MemoryUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$ECS.CLUSTER.MEMORY.THRESHOLD}</expression>
+              <name>AWS ECS Cluster: High memory utilization (over {$ECS.CLUSTER.MEMORY.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>ECS cluster memory utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>7bb7238e5e2b47a9814493d1ad2d2b51</uuid>
+          <name>AWS ECS Cluster Active Services Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ActiveServicesCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of services that are running in the ECS cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>a910a56e42ae491ab054db203665feac</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ActiveServicesCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&lt;{$ECS.CLUSTER.ACTIVE.SERVICES.MIN.THRESHOLD}</expression>
+              <name>AWS ECS Cluster: Low active services count (less than {$ECS.CLUSTER.ACTIVE.SERVICES.MIN.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of active services in cluster is below minimum threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>1de8a502987c4baf807695619348afd9</uuid>
+          <name>AWS ECS Cluster Running Tasks Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},RunningTasksCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of tasks currently running in the ECS cluster</description>
+        </item>
+        <item>
+          <uuid>b330d04affba4d1b9beac37c7dbeaa3d</uuid>
+          <name>AWS ECS Cluster Pending Tasks Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PendingTasksCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of tasks currently pending in the ECS cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>dae83642f1ba45988acaa2934c71f518</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PendingTasksCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$ECS.CLUSTER.PENDING.TASKS.THRESHOLD}</expression>
+              <name>AWS ECS Cluster: High pending tasks count (over {$ECS.CLUSTER.PENDING.TASKS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of pending tasks in cluster is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Service Level Metrics -->
+        <item>
+          <uuid>bbbed4fdbd33471292ec1cac2dc46070</uuid>
+          <name>AWS ECS Service CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Average CPU utilization of all tasks in the ECS service</description>
+          <triggers>
+            <trigger>
+              <uuid>7f1ea568a8ea414086202d38a2f5f195</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}])&gt;{$ECS.SERVICE.CPU.THRESHOLD}</expression>
+              <name>AWS ECS Service: High CPU utilization (over {$ECS.SERVICE.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>ECS service CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>916c951de73a40dfbd1d7ffc049938a0</uuid>
+          <name>AWS ECS Service Memory Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},MemoryUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Average memory utilization of all tasks in the ECS service</description>
+          <triggers>
+            <trigger>
+              <uuid>c3a0bc9983534416812f7738ee98a5fb</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},MemoryUtilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}])&gt;{$ECS.SERVICE.MEMORY.THRESHOLD}</expression>
+              <name>AWS ECS Service: High memory utilization (over {$ECS.SERVICE.MEMORY.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>ECS service memory utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f723defaddbb4dd5832548c535012c1f</uuid>
+          <name>AWS ECS Service Running Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},RunningCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of tasks currently running for the ECS service</description>
+          <triggers>
+            <trigger>
+              <uuid>f80d50c653554576b64ad0aeb6f15318</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},RunningCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}])&lt;{$ECS.SERVICE.RUNNING.MIN.THRESHOLD}</expression>
+              <name>AWS ECS Service: Low running count (less than {$ECS.SERVICE.RUNNING.MIN.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of running tasks for service is below minimum threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>110ac78641874b26bfb36d243c92474f</uuid>
+          <name>AWS ECS Service Pending Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PendingCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of tasks currently pending for the ECS service</description>
+          <triggers>
+            <trigger>
+              <uuid>de18316718de412a9b96419d3040467a</uuid>
+              <expression>last(/Template Megazone AWS ECS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PendingCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}])&gt;{$ECS.SERVICE.PENDING.THRESHOLD}</expression>
+              <name>AWS ECS Service: High pending count (over {$ECS.SERVICE.PENDING.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of pending tasks for service is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>8e8c7a1ea59e4e54b7fe8955eb891e99</uuid>
+          <name>AWS ECS Service Desired Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DesiredCount,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=ServiceName,Value={$SERVICE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Desired number of tasks for the ECS service</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$CLUSTER_NAME}</macro>
+          <value>my-ecs-cluster</value>
+          <description>ECS cluster name</description>
+        </macro>
+        <macro>
+          <macro>{$SERVICE_NAME}</macro>
+          <value>my-ecs-service</value>
+          <description>ECS service name</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/ECS</value>
+          <description>CloudWatch namespace for ECS</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where ECS is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.CLUSTER.CPU.THRESHOLD}</macro>
+          <value>80</value>
+          <description>ECS cluster CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.CLUSTER.MEMORY.THRESHOLD}</macro>
+          <value>80</value>
+          <description>ECS cluster memory utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.CLUSTER.ACTIVE.SERVICES.MIN.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Minimum number of active services threshold</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.CLUSTER.PENDING.TASKS.THRESHOLD}</macro>
+          <value>5</value>
+          <description>Maximum number of pending tasks threshold</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.SERVICE.CPU.THRESHOLD}</macro>
+          <value>85</value>
+          <description>ECS service CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.SERVICE.MEMORY.THRESHOLD}</macro>
+          <value>85</value>
+          <description>ECS service memory utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.SERVICE.RUNNING.MIN.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Minimum number of running tasks threshold</description>
+        </macro>
+        <macro>
+          <macro>{$ECS.SERVICE.PENDING.THRESHOLD}</macro>
+          <value>3</value>
+          <description>Maximum number of pending tasks threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

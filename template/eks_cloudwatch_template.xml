@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>02dfce21b0054a69b5459f9697425054</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>347c9c60c8044576bab3ada117901382</uuid>
+      <template>Template Megazone AWS EKS CloudWatch</template>
+      <name>Template Megazone AWS EKS CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Cluster Level Metrics -->
+        <item>
+          <uuid>31649e2376954159a03ccaebfef2ef3b</uuid>
+          <name>AWS EKS Cluster Failed Request Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},cluster_failed_request_count,Sum,"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of failed requests to the Kubernetes API server</description>
+          <triggers>
+            <trigger>
+              <uuid>a032575749ac44a78e166ed7c7d9b514</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},cluster_failed_request_count,Sum,"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$EKS.CLUSTER.FAILED.REQUESTS.THRESHOLD}</expression>
+              <name>AWS EKS Cluster: High failed request count (over {$EKS.CLUSTER.FAILED.REQUESTS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of failed API server requests is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>2367c82615ca4ce8a4f80147797239ee</uuid>
+          <name>AWS EKS Cluster Node Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},cluster_node_count,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of nodes in the EKS cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>082fc93076c146dbaa910a1a9fe96dcd</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},cluster_node_count,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&lt;{$EKS.CLUSTER.MIN.NODES.THRESHOLD}</expression>
+              <name>AWS EKS Cluster: Low node count (less than {$EKS.CLUSTER.MIN.NODES.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of cluster nodes is below minimum threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>103c0fc4ee9143caa7700f9adf62c89c</uuid>
+          <name>AWS EKS Cluster Running Pods Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},cluster_number_of_running_pods,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of pods running in the EKS cluster</description>
+        </item>
+        <!-- Node Level Metrics -->
+        <item>
+          <uuid>8bd8463e0ac84979a2fed7392ba02c34</uuid>
+          <name>AWS EKS Node CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_cpu_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>CPU utilization of the EKS node</description>
+          <triggers>
+            <trigger>
+              <uuid>743478e805f348619607986086f85f94</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_cpu_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}])&gt;{$EKS.NODE.CPU.THRESHOLD}</expression>
+              <name>AWS EKS Node: High CPU utilization (over {$EKS.NODE.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>EKS node CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>b786209d3ff4401ab6e60a31a9911ab4</uuid>
+          <name>AWS EKS Node Memory Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_memory_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Memory utilization of the EKS node</description>
+          <triggers>
+            <trigger>
+              <uuid>edb3ee614d71433995bf50236757d1b0</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_memory_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}])&gt;{$EKS.NODE.MEMORY.THRESHOLD}</expression>
+              <name>AWS EKS Node: High memory utilization (over {$EKS.NODE.MEMORY.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>EKS node memory utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f1e185965674424780b7946ae99dcb75</uuid>
+          <name>AWS EKS Node Network Total Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_network_total_bytes,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Total network bytes transferred by the EKS node</description>
+        </item>
+        <item>
+          <uuid>38d0f1d6ca924034a37da50d41b21801</uuid>
+          <name>AWS EKS Node Filesystem Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_filesystem_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Filesystem utilization of the EKS node</description>
+          <triggers>
+            <trigger>
+              <uuid>303cab7d34504ab5b47923d6e4b98422</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_filesystem_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}])&gt;{$EKS.NODE.FILESYSTEM.THRESHOLD}</expression>
+              <name>AWS EKS Node: High filesystem utilization (over {$EKS.NODE.FILESYSTEM.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>EKS node filesystem utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>cc2f8e3102074b3ca076e4c25819724b</uuid>
+          <name>AWS EKS Node Running Pods Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},node_number_of_running_pods,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=NodeName,Value={$NODE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of pods running on the EKS node</description>
+        </item>
+        <!-- Pod Level Metrics -->
+        <item>
+          <uuid>a3805574751943d9bbaf89b77fd9340b</uuid>
+          <name>AWS EKS Pod CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},pod_cpu_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=Namespace,Value={$K8S_NAMESPACE} Name=PodName,Value={$POD_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>CPU utilization of the EKS pod</description>
+          <triggers>
+            <trigger>
+              <uuid>f8711670a4e54056a0ba08b4ec672323</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},pod_cpu_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=Namespace,Value={$K8S_NAMESPACE} Name=PodName,Value={$POD_NAME}",{$ROLE_ARN}])&gt;{$EKS.POD.CPU.THRESHOLD}</expression>
+              <name>AWS EKS Pod: High CPU utilization (over {$EKS.POD.CPU.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>EKS pod CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>240790cbad5f49098e00dbb1ab6f524c</uuid>
+          <name>AWS EKS Pod Memory Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},pod_memory_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=Namespace,Value={$K8S_NAMESPACE} Name=PodName,Value={$POD_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Memory utilization of the EKS pod</description>
+          <triggers>
+            <trigger>
+              <uuid>0b8aae1cbb574c8b88f672b8893087d5</uuid>
+              <expression>last(/Template Megazone AWS EKS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},pod_memory_utilization,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=Namespace,Value={$K8S_NAMESPACE} Name=PodName,Value={$POD_NAME}",{$ROLE_ARN}])&gt;{$EKS.POD.MEMORY.THRESHOLD}</expression>
+              <name>AWS EKS Pod: High memory utilization (over {$EKS.POD.MEMORY.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>EKS pod memory utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>0fb731addbe54637ba4367d13d4bf167</uuid>
+          <name>AWS EKS Pod Network RX Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},pod_network_rx_bytes,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=Namespace,Value={$K8S_NAMESPACE} Name=PodName,Value={$POD_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes received by the EKS pod</description>
+        </item>
+        <item>
+          <uuid>51f2ea185508432880b75b5406524610</uuid>
+          <name>AWS EKS Pod Network TX Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},pod_network_tx_bytes,{$STATISTIC},"Name=ClusterName,Value={$CLUSTER_NAME} Name=Namespace,Value={$K8S_NAMESPACE} Name=PodName,Value={$POD_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes transmitted by the EKS pod</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$CLUSTER_NAME}</macro>
+          <value>my-eks-cluster</value>
+          <description>EKS cluster name</description>
+        </macro>
+        <macro>
+          <macro>{$NODE_NAME}</macro>
+          <value>ip-192-168-1-100.ap-northeast-2.compute.internal</value>
+          <description>EKS node name</description>
+        </macro>
+        <macro>
+          <macro>{$K8S_NAMESPACE}</macro>
+          <value>default</value>
+          <description>Kubernetes namespace</description>
+        </macro>
+        <macro>
+          <macro>{$POD_NAME}</macro>
+          <value>my-pod-12345</value>
+          <description>Kubernetes pod name</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/EKS</value>
+          <description>CloudWatch namespace for EKS</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where EKS is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.CLUSTER.FAILED.REQUESTS.THRESHOLD}</macro>
+          <value>10</value>
+          <description>EKS cluster failed requests threshold</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.CLUSTER.MIN.NODES.THRESHOLD}</macro>
+          <value>2</value>
+          <description>Minimum number of cluster nodes threshold</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.NODE.CPU.THRESHOLD}</macro>
+          <value>80</value>
+          <description>EKS node CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.NODE.MEMORY.THRESHOLD}</macro>
+          <value>80</value>
+          <description>EKS node memory utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.NODE.FILESYSTEM.THRESHOLD}</macro>
+          <value>85</value>
+          <description>EKS node filesystem utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.POD.CPU.THRESHOLD}</macro>
+          <value>90</value>
+          <description>EKS pod CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$EKS.POD.MEMORY.THRESHOLD}</macro>
+          <value>90</value>
+          <description>EKS pod memory utilization threshold (%)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>9909071de84d41789734430bb46dc957</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>f9289a42bbb140b3b6b60820b52d9808</uuid>
+      <template>Template Megazone AWS CloudFront CloudWatch</template>
+      <name>Template Megazone AWS CloudFront CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Distribution Level Metrics -->
+        <item>
+          <uuid>f4b30e65a8a74ffd9b5e3e3d8cd458d6</uuid>
+          <name>AWS CloudFront Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Requests,Sum,"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of requests to the CloudFront distribution</description>
+        </item>
+        <item>
+          <uuid>e825e36da6c0454094b7c9b9f39aadd5</uuid>
+          <name>AWS CloudFront Bytes Downloaded</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesDownloaded,Sum,"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes downloaded from the CloudFront distribution</description>
+        </item>
+        <item>
+          <uuid>bf54a7de5a7f4ede8e5b69f085924ef9</uuid>
+          <name>AWS CloudFront Bytes Uploaded</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesUploaded,Sum,"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes uploaded to the CloudFront distribution</description>
+        </item>
+        <item>
+          <uuid>77b13320cf6f42f28ddf58ccd8380495</uuid>
+          <name>AWS CloudFront 4xx Error Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4xxErrorRate,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Percentage of all requests for which the HTTP status code is 4xx</description>
+          <triggers>
+            <trigger>
+              <uuid>e80c546cc2e8462c82e912186682e253</uuid>
+              <expression>last(/Template Megazone AWS CloudFront CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4xxErrorRate,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}])&gt;{$CLOUDFRONT.4XX.ERROR.RATE.THRESHOLD}</expression>
+              <name>AWS CloudFront: High 4xx error rate (over {$CLOUDFRONT.4XX.ERROR.RATE.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>CloudFront 4xx error rate is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>a7359e56327647a1bcc316febc72e331</uuid>
+          <name>AWS CloudFront 5xx Error Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5xxErrorRate,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Percentage of all requests for which the HTTP status code is 5xx</description>
+          <triggers>
+            <trigger>
+              <uuid>b60248e8f9b24bd1a907e8558ffed1ce</uuid>
+              <expression>last(/Template Megazone AWS CloudFront CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5xxErrorRate,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}])&gt;{$CLOUDFRONT.5XX.ERROR.RATE.THRESHOLD}</expression>
+              <name>AWS CloudFront: High 5xx error rate (over {$CLOUDFRONT.5XX.ERROR.RATE.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>CloudFront 5xx error rate is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>fc1537a165594097923d182f8a5b391b</uuid>
+          <name>AWS CloudFront Origin Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},OriginLatency,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Time that CloudFront waits to receive a complete response from the origin</description>
+          <triggers>
+            <trigger>
+              <uuid>a1f17e6c3dd745b2a775508494eb2760</uuid>
+              <expression>last(/Template Megazone AWS CloudFront CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},OriginLatency,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}])&gt;{$CLOUDFRONT.ORIGIN.LATENCY.THRESHOLD}</expression>
+              <name>AWS CloudFront: High origin latency (over {$CLOUDFRONT.ORIGIN.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>CloudFront origin latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>7136171e3c7645f59539948e240dd597</uuid>
+          <name>AWS CloudFront Cache Hit Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHitRate,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Percentage of all cacheable requests for which CloudFront served the content from its cache</description>
+          <triggers>
+            <trigger>
+              <uuid>2048f0eb0a8e4e2596741f14a7e3a5c7</uuid>
+              <expression>last(/Template Megazone AWS CloudFront CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHitRate,{$STATISTIC},"Name=DistributionId,Value={$DISTRIBUTION_ID}",{$ROLE_ARN}])&lt;{$CLOUDFRONT.CACHE.HIT.RATE.THRESHOLD}</expression>
+              <name>AWS CloudFront: Low cache hit rate (less than {$CLOUDFRONT.CACHE.HIT.RATE.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>CloudFront cache hit rate is below threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$DISTRIBUTION_ID}</macro>
+          <value>E1PA6795UKMFR9</value>
+          <description>CloudFront Distribution ID</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/CloudFront</value>
+          <description>CloudWatch namespace for CloudFront</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>us-east-1</value>
+          <description>AWS Region for CloudFront metrics (always us-east-1)</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$CLOUDFRONT.4XX.ERROR.RATE.THRESHOLD}</macro>
+          <value>5</value>
+          <description>CloudFront 4xx error rate threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$CLOUDFRONT.5XX.ERROR.RATE.THRESHOLD}</macro>
+          <value>2</value>
+          <description>CloudFront 5xx error rate threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$CLOUDFRONT.ORIGIN.LATENCY.THRESHOLD}</macro>
+          <value>5000</value>
+          <description>CloudFront origin latency threshold (ms)</description>
+        </macro>
+        <macro>
+          <macro>{$CLOUDFRONT.CACHE.HIT.RATE.THRESHOLD}</macro>
+          <value>80</value>
+          <description>CloudFront cache hit rate threshold (%) - alert if below this value</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

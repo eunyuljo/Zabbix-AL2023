@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>32a322c6d6ce4ad6a93efec46f72fa06</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>f04bb21bf6e24e9d82c2ef5bbefdbedd</uuid>
+      <template>Template Megazone AWS API Gateway CloudWatch</template>
+      <name>Template Megazone AWS API Gateway CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- API Level Metrics -->
+        <item>
+          <uuid>a2aac2ceb499464f88c3f01d272fbba2</uuid>
+          <name>AWS API Gateway API Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Count,Sum,"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of API requests at API level</description>
+        </item>
+        <item>
+          <uuid>da036e8c0ec4455091bceb53e1197d1f</uuid>
+          <name>AWS API Gateway API Integration Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},IntegrationLatency,{$STATISTIC},"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Time between API Gateway relaying a request to backend and receiving response</description>
+          <triggers>
+            <trigger>
+              <uuid>5d9f13847ea84effb804f6a84a6d5f77</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},IntegrationLatency,{$STATISTIC},"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}])&gt;{$APIGW.API.INTEGRATION.LATENCY.THRESHOLD}</expression>
+              <name>AWS API Gateway API: High integration latency (over {$APIGW.API.INTEGRATION.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>API Gateway API integration latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>b6f2929afcca40a6944c86e16b605eb0</uuid>
+          <name>AWS API Gateway API Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Latency,{$STATISTIC},"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Time between API Gateway receiving request and returning response to client</description>
+          <triggers>
+            <trigger>
+              <uuid>ddb489d17c08452cbbf0a3386fd7aad3</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Latency,{$STATISTIC},"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}])&gt;{$APIGW.API.LATENCY.THRESHOLD}</expression>
+              <name>AWS API Gateway API: High latency (over {$APIGW.API.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>API Gateway API latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>3ba78104d11641d6bbc42c82e12231e9</uuid>
+          <name>AWS API Gateway API 4XX Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4XXError,Sum,"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of client-side errors at API level</description>
+          <triggers>
+            <trigger>
+              <uuid>18489d253d8b4ecb9ba8fc6b2038b16d</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4XXError,Sum,"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}])&gt;{$APIGW.API.4XX.ERRORS.THRESHOLD}</expression>
+              <name>AWS API Gateway API: High 4XX errors (over {$APIGW.API.4XX.ERRORS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of API 4XX errors is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>0cb9d317c7774b80ab2fcafdb1cb8fce</uuid>
+          <name>AWS API Gateway API 5XX Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5XXError,Sum,"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of server-side errors at API level</description>
+          <triggers>
+            <trigger>
+              <uuid>8e84da6b63644e73b28cbc2a5be7ab38</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5XXError,Sum,"Name=ApiName,Value={$API_NAME}",{$ROLE_ARN}])&gt;{$APIGW.API.5XX.ERRORS.THRESHOLD}</expression>
+              <name>AWS API Gateway API: High 5XX errors (over {$APIGW.API.5XX.ERRORS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of API 5XX errors is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Stage Level Metrics -->
+        <item>
+          <uuid>bc46f698ffae4a8785acc886617aebaa</uuid>
+          <name>AWS API Gateway Stage Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Count,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of API requests at stage level</description>
+        </item>
+        <item>
+          <uuid>8685635d8f5246b491592d9e77537cf0</uuid>
+          <name>AWS API Gateway Stage Integration Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},IntegrationLatency,{$STATISTIC},"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Time between API Gateway relaying a request to backend and receiving response at stage level</description>
+        </item>
+        <item>
+          <uuid>736b8e0398224b9e9116c3d0963f75db</uuid>
+          <name>AWS API Gateway Stage Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Latency,{$STATISTIC},"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Time between API Gateway receiving request and returning response to client at stage level</description>
+          <triggers>
+            <trigger>
+              <uuid>0ced73e6bf0d4d46a58c3e84ae79f360</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Latency,{$STATISTIC},"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}])&gt;{$APIGW.STAGE.LATENCY.THRESHOLD}</expression>
+              <name>AWS API Gateway Stage: High latency (over {$APIGW.STAGE.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>API Gateway stage latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>76e7431446c54a53a65dde79718f5c62</uuid>
+          <name>AWS API Gateway Stage 4XX Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4XXError,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of client-side errors at stage level</description>
+          <triggers>
+            <trigger>
+              <uuid>0152933c1a9b4759b0e217d246e18f58</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4XXError,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}])&gt;{$APIGW.STAGE.4XX.ERRORS.THRESHOLD}</expression>
+              <name>AWS API Gateway Stage: High 4XX errors (over {$APIGW.STAGE.4XX.ERRORS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of stage 4XX errors is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>3bd2e4d8b6104c008f0e9907586d2d2e</uuid>
+          <name>AWS API Gateway Stage 5XX Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5XXError,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of server-side errors at stage level</description>
+          <triggers>
+            <trigger>
+              <uuid>064d1cdebca641a6a156adf9fa6091bf</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5XXError,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}])&gt;{$APIGW.STAGE.5XX.ERRORS.THRESHOLD}</expression>
+              <name>AWS API Gateway Stage: High 5XX errors (over {$APIGW.STAGE.5XX.ERRORS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of stage 5XX errors is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>16048d71986f4be79a445ee8c9f6b560</uuid>
+          <name>AWS API Gateway Stage Cache Hit Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHitCount,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of requests served from API Gateway cache at stage level</description>
+          <triggers>
+            <trigger>
+              <uuid>3736d094dcd74f5592fadf548b9b9138</uuid>
+              <expression>last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHitCount,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}])/(last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHitCount,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}])+last(/Template Megazone AWS API Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheMissCount,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]))*100&lt;{$APIGW.CACHE.HIT.RATE.THRESHOLD}</expression>
+              <name>AWS API Gateway Stage: Low cache hit rate (less than {$APIGW.CACHE.HIT.RATE.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>API Gateway cache hit rate is below threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>e56b9da9f8c5432c9980bb681cf29565</uuid>
+          <name>AWS API Gateway Stage Cache Miss Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheMissCount,Sum,"Name=ApiName,Value={$API_NAME} Name=Stage,Value={$STAGE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of requests not served from API Gateway cache at stage level</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$API_NAME}</macro>
+          <value>my-api-gateway</value>
+          <description>API Gateway API name</description>
+        </macro>
+        <macro>
+          <macro>{$STAGE_NAME}</macro>
+          <value>prod</value>
+          <description>API Gateway stage name</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/ApiGateway</value>
+          <description>CloudWatch namespace for API Gateway</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where API Gateway is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.API.LATENCY.THRESHOLD}</macro>
+          <value>2000</value>
+          <description>API Gateway API latency threshold (ms)</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.API.INTEGRATION.LATENCY.THRESHOLD}</macro>
+          <value>1500</value>
+          <description>API Gateway API integration latency threshold (ms)</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.API.4XX.ERRORS.THRESHOLD}</macro>
+          <value>50</value>
+          <description>API Gateway API 4XX errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.API.5XX.ERRORS.THRESHOLD}</macro>
+          <value>10</value>
+          <description>API Gateway API 5XX errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.STAGE.LATENCY.THRESHOLD}</macro>
+          <value>2000</value>
+          <description>API Gateway stage latency threshold (ms)</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.STAGE.4XX.ERRORS.THRESHOLD}</macro>
+          <value>50</value>
+          <description>API Gateway stage 4XX errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.STAGE.5XX.ERRORS.THRESHOLD}</macro>
+          <value>10</value>
+          <description>API Gateway stage 5XX errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$APIGW.CACHE.HIT.RATE.THRESHOLD}</macro>
+          <value>80</value>
+          <description>API Gateway cache hit rate threshold (%)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

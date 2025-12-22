@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>b9b63aeac13e43ab9b23e8c9cce5ee2d</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>dc15b0fc556343768f3d7d47a638f982</uuid>
+      <template>Template Megazone AWS Direct Connect CloudWatch</template>
+      <name>Template Megazone AWS Direct Connect CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Connection Level Metrics -->
+        <item>
+          <uuid>3cffa16dfb2d49c380822ee75e5dcfb5</uuid>
+          <name>AWS Direct Connect Connection State</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionState,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>State of the Direct Connect connection (0=DOWN, 1=UP)</description>
+          <triggers>
+            <trigger>
+              <uuid>76000525f9b34aed955d31991c4d842c</uuid>
+              <expression>last(/Template Megazone AWS Direct Connect CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionState,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}])=0</expression>
+              <name>AWS Direct Connect: Connection is DOWN</name>
+              <priority>HIGH</priority>
+              <description>Direct Connect connection is in DOWN state</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>39471174ac0c45ecb9ce78ba16fcfe46</uuid>
+          <name>AWS Direct Connect Connection Egress Bandwidth</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionBpsEgress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Outbound bandwidth utilization on the Direct Connect connection</description>
+          <triggers>
+            <trigger>
+              <uuid>f87d1d1b9f9040feabbca618833b50c2</uuid>
+              <expression>last(/Template Megazone AWS Direct Connect CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionBpsEgress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}])&gt;{$DX.CONNECTION.EGRESS.BANDWIDTH.THRESHOLD}</expression>
+              <name>AWS Direct Connect: High egress bandwidth (over {$DX.CONNECTION.EGRESS.BANDWIDTH.THRESHOLD}B/s)</name>
+              <priority>WARNING</priority>
+              <description>Direct Connect connection egress bandwidth is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>16b22c428b3c4e3b85e962dd3f7187ba</uuid>
+          <name>AWS Direct Connect Connection Ingress Bandwidth</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionBpsIngress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Inbound bandwidth utilization on the Direct Connect connection</description>
+          <triggers>
+            <trigger>
+              <uuid>ce4e42df793a4df5acf430de0472f6ec</uuid>
+              <expression>last(/Template Megazone AWS Direct Connect CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionBpsIngress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}])&gt;{$DX.CONNECTION.INGRESS.BANDWIDTH.THRESHOLD}</expression>
+              <name>AWS Direct Connect: High ingress bandwidth (over {$DX.CONNECTION.INGRESS.BANDWIDTH.THRESHOLD}B/s)</name>
+              <priority>WARNING</priority>
+              <description>Direct Connect connection ingress bandwidth is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>90115a458c8e4f8082ce8deeefef5ba9</uuid>
+          <name>AWS Direct Connect Connection Egress Packet Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionPpsEgress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>pps</units>
+          <description>Outbound packet rate on the Direct Connect connection</description>
+          <triggers>
+            <trigger>
+              <uuid>8cec1b8e60b24244b84344b655b6aeaf</uuid>
+              <expression>last(/Template Megazone AWS Direct Connect CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionPpsEgress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}])&gt;{$DX.CONNECTION.PACKET.RATE.THRESHOLD}</expression>
+              <name>AWS Direct Connect: High egress packet rate (over {$DX.CONNECTION.PACKET.RATE.THRESHOLD}pps)</name>
+              <priority>WARNING</priority>
+              <description>Direct Connect connection egress packet rate is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>43a116d37a9f4a92a0d02dce1b030e66</uuid>
+          <name>AWS Direct Connect Connection Ingress Packet Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConnectionPpsIngress,{$STATISTIC},"Name=ConnectionId,Value={$CONNECTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>pps</units>
+          <description>Inbound packet rate on the Direct Connect connection</description>
+        </item>
+        <!-- Virtual Interface Level Metrics -->
+        <item>
+          <uuid>d5736199d923485c8d93a44613d22bb3</uuid>
+          <name>AWS Direct Connect VIF Egress Bandwidth</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VirtualInterfaceBpsEgress,{$STATISTIC},"Name=VirtualInterfaceId,Value={$VIF_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Outbound bandwidth utilization on the Virtual Interface</description>
+          <triggers>
+            <trigger>
+              <uuid>67a6d12dd484430ca6223b8a44a7a8e4</uuid>
+              <expression>last(/Template Megazone AWS Direct Connect CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VirtualInterfaceBpsEgress,{$STATISTIC},"Name=VirtualInterfaceId,Value={$VIF_ID}",{$ROLE_ARN}])&gt;{$DX.VIF.EGRESS.BANDWIDTH.THRESHOLD}</expression>
+              <name>AWS Direct Connect VIF: High egress bandwidth (over {$DX.VIF.EGRESS.BANDWIDTH.THRESHOLD}B/s)</name>
+              <priority>WARNING</priority>
+              <description>Direct Connect Virtual Interface egress bandwidth is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>30fc2eadfab846288361b6f71a213b41</uuid>
+          <name>AWS Direct Connect VIF Ingress Bandwidth</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VirtualInterfaceBpsIngress,{$STATISTIC},"Name=VirtualInterfaceId,Value={$VIF_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Inbound bandwidth utilization on the Virtual Interface</description>
+          <triggers>
+            <trigger>
+              <uuid>57b4c48a436e4f1aa5c3646ad208adc7</uuid>
+              <expression>last(/Template Megazone AWS Direct Connect CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VirtualInterfaceBpsIngress,{$STATISTIC},"Name=VirtualInterfaceId,Value={$VIF_ID}",{$ROLE_ARN}])&gt;{$DX.VIF.INGRESS.BANDWIDTH.THRESHOLD}</expression>
+              <name>AWS Direct Connect VIF: High ingress bandwidth (over {$DX.VIF.INGRESS.BANDWIDTH.THRESHOLD}B/s)</name>
+              <priority>WARNING</priority>
+              <description>Direct Connect Virtual Interface ingress bandwidth is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>e5e2eca192214d72b249319b0a4687a1</uuid>
+          <name>AWS Direct Connect VIF Egress Packet Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VirtualInterfacePpsEgress,{$STATISTIC},"Name=VirtualInterfaceId,Value={$VIF_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>pps</units>
+          <description>Outbound packet rate on the Virtual Interface</description>
+        </item>
+        <item>
+          <uuid>e2683b876dfc4bbba8a5fd5a4ce3f32e</uuid>
+          <name>AWS Direct Connect VIF Ingress Packet Rate</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VirtualInterfacePpsIngress,{$STATISTIC},"Name=VirtualInterfaceId,Value={$VIF_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>pps</units>
+          <description>Inbound packet rate on the Virtual Interface</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$CONNECTION_ID}</macro>
+          <value>dxcon-fg31dyv6</value>
+          <description>AWS Direct Connect connection ID</description>
+        </macro>
+        <macro>
+          <macro>{$VIF_ID}</macro>
+          <value>dxvif-ffhhk74f</value>
+          <description>AWS Direct Connect Virtual Interface ID</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/DX</value>
+          <description>CloudWatch namespace for Direct Connect</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where Direct Connect is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$DX.CONNECTION.EGRESS.BANDWIDTH.THRESHOLD}</macro>
+          <value>800000000</value>
+          <description>Direct Connect connection egress bandwidth threshold (800MB/s for 10Gbps)</description>
+        </macro>
+        <macro>
+          <macro>{$DX.CONNECTION.INGRESS.BANDWIDTH.THRESHOLD}</macro>
+          <value>800000000</value>
+          <description>Direct Connect connection ingress bandwidth threshold (800MB/s for 10Gbps)</description>
+        </macro>
+        <macro>
+          <macro>{$DX.CONNECTION.PACKET.RATE.THRESHOLD}</macro>
+          <value>1000000</value>
+          <description>Direct Connect connection packet rate threshold (1M pps)</description>
+        </macro>
+        <macro>
+          <macro>{$DX.VIF.EGRESS.BANDWIDTH.THRESHOLD}</macro>
+          <value>400000000</value>
+          <description>Direct Connect VIF egress bandwidth threshold (400MB/s)</description>
+        </macro>
+        <macro>
+          <macro>{$DX.VIF.INGRESS.BANDWIDTH.THRESHOLD}</macro>
+          <value>400000000</value>
+          <description>Direct Connect VIF ingress bandwidth threshold (400MB/s)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

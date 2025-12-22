@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>019eba3e41854ff0922fdf940eecb820</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>317f9c99cf69442ebcac3bfd6363b523</uuid>
+      <template>Template Megazone AWS Backup CloudWatch</template>
+      <name>Template Megazone AWS Backup CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Backup Vault Level Metrics -->
+        <item>
+          <uuid>406fc96249f244a9bc2912e79410668d</uuid>
+          <name>AWS Backup Vault Backup Jobs Created</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCreated,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of backup jobs created in the backup vault</description>
+          <triggers>
+            <trigger>
+              <uuid>3eb3f0727be9491a908954c242c5e7ce</uuid>
+              <expression>last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCreated,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])=0</expression>
+              <name>AWS Backup Vault: No backup jobs created in recent period</name>
+              <priority>WARNING</priority>
+              <description>No backup jobs have been created in the backup vault recently</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>adca6ee85c8547e4b0a809d7e83be367</uuid>
+          <name>AWS Backup Vault Backup Jobs Completed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCompleted,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of backup jobs completed successfully in the backup vault</description>
+          <triggers>
+            <trigger>
+              <uuid>6d2e84cc45244ec290a7758b3077cd19</uuid>
+              <expression>last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCompleted,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])/(last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCompleted,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])+last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsFailed,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]))*100&lt;{$BACKUP.SUCCESS.RATE.THRESHOLD}</expression>
+              <name>AWS Backup Vault: Low backup success rate (less than {$BACKUP.SUCCESS.RATE.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>Backup success rate is below acceptable threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>6da62aff2de14e92af674615f8cda969</uuid>
+          <name>AWS Backup Vault Backup Jobs Failed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsFailed,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of backup jobs failed in the backup vault</description>
+          <triggers>
+            <trigger>
+              <uuid>c1389bf457cd4d9fad7788a7f82ddfac</uuid>
+              <expression>last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsFailed,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])&gt;{$BACKUP.FAILED.JOBS.THRESHOLD}</expression>
+              <name>AWS Backup Vault: High backup job failures (over {$BACKUP.FAILED.JOBS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of failed backup jobs is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>915f8d98aab448d980d8980093b8b8ac</uuid>
+          <name>AWS Backup Vault Restore Jobs Created</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsCreated,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of restore jobs created from the backup vault</description>
+        </item>
+        <item>
+          <uuid>c1de08a4a31e450f8199fa056719cd7a</uuid>
+          <name>AWS Backup Vault Restore Jobs Completed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsCompleted,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of restore jobs completed successfully from the backup vault</description>
+          <triggers>
+            <trigger>
+              <uuid>7a87318c0baf4b149117c3a640456e85</uuid>
+              <expression>last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsCompleted,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])/(last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsCompleted,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])+last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsFailed,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]))*100&lt;{$BACKUP.RESTORE.SUCCESS.RATE.THRESHOLD}</expression>
+              <name>AWS Backup Vault: Low restore success rate (less than {$BACKUP.RESTORE.SUCCESS.RATE.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>Restore success rate is below acceptable threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>d014aaf18c214fc6a0fdf4895ec9a4a0</uuid>
+          <name>AWS Backup Vault Restore Jobs Failed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsFailed,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of restore jobs failed from the backup vault</description>
+          <triggers>
+            <trigger>
+              <uuid>7654ccad7d314400a10e0604720c66d5</uuid>
+              <expression>last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfRestoreJobsFailed,Sum,"Name=BackupVaultName,Value={$BACKUP_VAULT_NAME}",{$ROLE_ARN}])&gt;{$BACKUP.RESTORE.FAILED.JOBS.THRESHOLD}</expression>
+              <name>AWS Backup Vault: High restore job failures (over {$BACKUP.RESTORE.FAILED.JOBS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of failed restore jobs is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Resource Type Level Metrics -->
+        <item>
+          <uuid>4db415049f904618a883af957ab3b297</uuid>
+          <name>AWS Backup Resource Backup Jobs Created</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCreated,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of backup jobs created for the resource type</description>
+        </item>
+        <item>
+          <uuid>9f6281e08b8f4e8986047c53394642d3</uuid>
+          <name>AWS Backup Resource Backup Jobs Completed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsCompleted,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of backup jobs completed successfully for the resource type</description>
+        </item>
+        <item>
+          <uuid>2417f9ef764041cf97ab13179fe59572</uuid>
+          <name>AWS Backup Resource Backup Jobs Failed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfBackupJobsFailed,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of backup jobs failed for the resource type</description>
+        </item>
+        <item>
+          <uuid>e51d0f88addb49f3848e82a4840a64ff</uuid>
+          <name>AWS Backup Resource Copy Jobs Created</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfCopyJobsCreated,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of copy jobs created for the resource type</description>
+        </item>
+        <item>
+          <uuid>0f8f6e8247b94be59e517ce7dbe6c69f</uuid>
+          <name>AWS Backup Resource Copy Jobs Completed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfCopyJobsCompleted,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of copy jobs completed successfully for the resource type</description>
+        </item>
+        <item>
+          <uuid>a8df83efa94e409aab2e8e72563b7f70</uuid>
+          <name>AWS Backup Resource Copy Jobs Failed</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfCopyJobsFailed,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of copy jobs failed for the resource type</description>
+          <triggers>
+            <trigger>
+              <uuid>80375a52cb714060a1b738f0908ee4f4</uuid>
+              <expression>last(/Template Megazone AWS Backup CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfCopyJobsFailed,Sum,"Name=ResourceType,Value={$RESOURCE_TYPE}",{$ROLE_ARN}])&gt;{$BACKUP.COPY.FAILED.JOBS.THRESHOLD}</expression>
+              <name>AWS Backup Resource: High copy job failures (over {$BACKUP.COPY.FAILED.JOBS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of failed copy jobs is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$BACKUP_VAULT_NAME}</macro>
+          <value>my-backup-vault</value>
+          <description>AWS Backup vault name</description>
+        </macro>
+        <macro>
+          <macro>{$RESOURCE_TYPE}</macro>
+          <value>EBS</value>
+          <description>Resource type being backed up (EBS, RDS, DynamoDB, EFS, etc.)</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/Backup</value>
+          <description>CloudWatch namespace for AWS Backup</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where Backup vault is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Sum</value>
+          <description>CloudWatch statistic type (Sum for job counts)</description>
+        </macro>
+        <macro>
+          <macro>{$BACKUP.FAILED.JOBS.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Backup failed jobs threshold</description>
+        </macro>
+        <macro>
+          <macro>{$BACKUP.RESTORE.FAILED.JOBS.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Restore failed jobs threshold</description>
+        </macro>
+        <macro>
+          <macro>{$BACKUP.COPY.FAILED.JOBS.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Copy failed jobs threshold</description>
+        </macro>
+        <macro>
+          <macro>{$BACKUP.SUCCESS.RATE.THRESHOLD}</macro>
+          <value>95</value>
+          <description>Minimum backup success rate threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$BACKUP.RESTORE.SUCCESS.RATE.THRESHOLD}</macro>
+          <value>95</value>
+          <description>Minimum restore success rate threshold (%)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

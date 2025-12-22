@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>fe24a4208f0d4e4c9d5a1d0e73bbaf7a</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>1988f4cae9674e7b989d156cf9b3a5ed</uuid>
+      <template>Template Megazone AWS NAT Gateway CloudWatch</template>
+      <name>Template Megazone AWS NAT Gateway CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- NAT Gateway Level Metrics -->
+        <item>
+          <uuid>abdb7897d5dd408b974c37e1d2db10b6</uuid>
+          <name>AWS NAT Gateway Bytes In From Destination</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesInFromDestination,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes received by the NAT gateway from the destination</description>
+          <triggers>
+            <trigger>
+              <uuid>08504af9d4f44cada563db84aee3d9e5</uuid>
+              <expression>last(/Template Megazone AWS NAT Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesInFromDestination,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}])&gt;{$NAT.BYTES.IN.FROM.DESTINATION.THRESHOLD}</expression>
+              <name>AWS NAT Gateway: High bytes in from destination (over {$NAT.BYTES.IN.FROM.DESTINATION.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>NAT Gateway inbound bytes from destination is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>b915a0e612994bb7910a72b642e6cd51</uuid>
+          <name>AWS NAT Gateway Bytes Out To Destination</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOutToDestination,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes sent out through the NAT gateway to the destination</description>
+          <triggers>
+            <trigger>
+              <uuid>accd25d67cb9471f9091ab3a54676a06</uuid>
+              <expression>last(/Template Megazone AWS NAT Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOutToDestination,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}])&gt;{$NAT.BYTES.OUT.TO.DESTINATION.THRESHOLD}</expression>
+              <name>AWS NAT Gateway: High bytes out to destination (over {$NAT.BYTES.OUT.TO.DESTINATION.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>NAT Gateway outbound bytes to destination is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>d292086f10bf45d394ee21f61c284d1f</uuid>
+          <name>AWS NAT Gateway Bytes In From Source</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesInFromSource,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes received by the NAT gateway from clients in your VPC</description>
+        </item>
+        <item>
+          <uuid>354548a30fde4b47b174f3f4a80a8a4f</uuid>
+          <name>AWS NAT Gateway Bytes Out To Source</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOutToSource,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes sent through the NAT gateway to the clients in your VPC</description>
+        </item>
+        <item>
+          <uuid>8690e819e8ab47aeb2fd3cb2b2484c08</uuid>
+          <name>AWS NAT Gateway Active Connection Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ActiveConnectionCount,{$STATISTIC},"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of concurrent active TCP connections through the NAT gateway</description>
+          <triggers>
+            <trigger>
+              <uuid>5512fffcba3c43faa57c04bb49111173</uuid>
+              <expression>last(/Template Megazone AWS NAT Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ActiveConnectionCount,{$STATISTIC},"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}])&gt;{$NAT.ACTIVE.CONNECTION.COUNT.THRESHOLD}</expression>
+              <name>AWS NAT Gateway: High active connection count (over {$NAT.ACTIVE.CONNECTION.COUNT.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>NAT Gateway active connection count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>37152d4f683544fcae5941cbabe7b933</uuid>
+          <name>AWS NAT Gateway Error Port Allocation</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ErrorPortAllocation,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of times the NAT gateway could not allocate a source port</description>
+          <triggers>
+            <trigger>
+              <uuid>6e824193a1db45e5b908d7b60a5fe323</uuid>
+              <expression>last(/Template Megazone AWS NAT Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ErrorPortAllocation,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}])&gt;{$NAT.ERROR.PORT.ALLOCATION.THRESHOLD}</expression>
+              <name>AWS NAT Gateway: Port allocation errors detected (over {$NAT.ERROR.PORT.ALLOCATION.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>NAT Gateway is experiencing port allocation errors</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>ac6215ab45cb4520b7b260dede53f65c</uuid>
+          <name>AWS NAT Gateway Packets Drop Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketsDropCount,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of packets dropped by the NAT gateway</description>
+          <triggers>
+            <trigger>
+              <uuid>184a89e46b5445d0a2671253872c8f08</uuid>
+              <expression>last(/Template Megazone AWS NAT Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketsDropCount,Sum,"Name=NatGatewayId,Value={$NAT_GATEWAY_ID}",{$ROLE_ARN}])&gt;{$NAT.PACKETS.DROP.COUNT.THRESHOLD}</expression>
+              <name>AWS NAT Gateway: High packet drop count (over {$NAT.PACKETS.DROP.COUNT.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>NAT Gateway packet drop count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$NAT_GATEWAY_ID}</macro>
+          <value>nat-1234567890abcdef0</value>
+          <description>NAT Gateway ID</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/NATGateway</value>
+          <description>CloudWatch namespace for NAT Gateway</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where NAT Gateway is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Maximum</value>
+          <description>CloudWatch statistic type (Maximum for connection count)</description>
+        </macro>
+        <macro>
+          <macro>{$NAT.BYTES.IN.FROM.DESTINATION.THRESHOLD}</macro>
+          <value>10737418240</value>
+          <description>NAT Gateway bytes in from destination threshold (10GB)</description>
+        </macro>
+        <macro>
+          <macro>{$NAT.BYTES.OUT.TO.DESTINATION.THRESHOLD}</macro>
+          <value>10737418240</value>
+          <description>NAT Gateway bytes out to destination threshold (10GB)</description>
+        </macro>
+        <macro>
+          <macro>{$NAT.ACTIVE.CONNECTION.COUNT.THRESHOLD}</macro>
+          <value>500</value>
+          <description>NAT Gateway active connection count threshold</description>
+        </macro>
+        <macro>
+          <macro>{$NAT.ERROR.PORT.ALLOCATION.THRESHOLD}</macro>
+          <value>1</value>
+          <description>NAT Gateway port allocation error threshold (any error is concerning)</description>
+        </macro>
+        <macro>
+          <macro>{$NAT.PACKETS.DROP.COUNT.THRESHOLD}</macro>
+          <value>100</value>
+          <description>NAT Gateway packet drop count threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

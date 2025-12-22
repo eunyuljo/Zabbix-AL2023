@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>f47e177f3932494a9342ae243cc9b6e2</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>14e0181a949142bfb6fe928ec961ba19</uuid>
+      <template>Template Megazone AWS DynamoDB CloudWatch</template>
+      <name>Template Megazone AWS DynamoDB CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Table Level Metrics -->
+        <item>
+          <uuid>fb23379bd63246c38ccf171b4ae18093</uuid>
+          <name>AWS DynamoDB Table Consumed Read Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedReadCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of read capacity units consumed by the DynamoDB table</description>
+          <triggers>
+            <trigger>
+              <uuid>d4ab1f655c7b46e0b71256a0861f3fe8</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedReadCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])/last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedReadCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])*100&gt;{$DYNAMODB.TABLE.READ.CAPACITY.THRESHOLD}</expression>
+              <name>AWS DynamoDB Table: High read capacity utilization (over {$DYNAMODB.TABLE.READ.CAPACITY.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>DynamoDB table read capacity utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>90be5776a3884e1b87143cde7ab607dd</uuid>
+          <name>AWS DynamoDB Table Consumed Write Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedWriteCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of write capacity units consumed by the DynamoDB table</description>
+          <triggers>
+            <trigger>
+              <uuid>70943b882da74d8d91f841389d98b588</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedWriteCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])/last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedWriteCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])*100&gt;{$DYNAMODB.TABLE.WRITE.CAPACITY.THRESHOLD}</expression>
+              <name>AWS DynamoDB Table: High write capacity utilization (over {$DYNAMODB.TABLE.WRITE.CAPACITY.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>DynamoDB table write capacity utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>fe01ce7ba65c46b3867b0a127004d11f</uuid>
+          <name>AWS DynamoDB Table Provisioned Read Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedReadCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of provisioned read capacity units for the DynamoDB table</description>
+        </item>
+        <item>
+          <uuid>20f1dcd5561b4235bdfb870fa82761e8</uuid>
+          <name>AWS DynamoDB Table Provisioned Write Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedWriteCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of provisioned write capacity units for the DynamoDB table</description>
+        </item>
+        <item>
+          <uuid>6d7341aec57f437d9e2eff558e371df9</uuid>
+          <name>AWS DynamoDB Table Read Throttled Events</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of read requests that were throttled for the DynamoDB table</description>
+          <triggers>
+            <trigger>
+              <uuid>5c0ef1bf228d43a8b0625b350270f0ab</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])&gt;{$DYNAMODB.TABLE.READ.THROTTLE.THRESHOLD}</expression>
+              <name>AWS DynamoDB Table: Read throttling events detected (over {$DYNAMODB.TABLE.READ.THROTTLE.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>DynamoDB table is experiencing read throttling events</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>cfc1ef1094d344809e395a0fe0472f91</uuid>
+          <name>AWS DynamoDB Table Write Throttled Events</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of write requests that were throttled for the DynamoDB table</description>
+          <triggers>
+            <trigger>
+              <uuid>dfc27116895148658fe78f14bb9578da</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])&gt;{$DYNAMODB.TABLE.WRITE.THROTTLE.THRESHOLD}</expression>
+              <name>AWS DynamoDB Table: Write throttling events detected (over {$DYNAMODB.TABLE.WRITE.THROTTLE.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>DynamoDB table is experiencing write throttling events</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>4dbd4e1eeb8147358e8276c178c6d82e</uuid>
+          <name>AWS DynamoDB Table Item Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ItemCount,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of items in the DynamoDB table</description>
+        </item>
+        <item>
+          <uuid>a1be00ac55574391a3168c49431445f9</uuid>
+          <name>AWS DynamoDB Table Size Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TableSizeBytes,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Total size of the DynamoDB table in bytes</description>
+          <triggers>
+            <trigger>
+              <uuid>40705d2f91e042da80e11f3fcae11fae</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TableSizeBytes,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME}",{$ROLE_ARN}])&gt;{$DYNAMODB.TABLE.SIZE.THRESHOLD}</expression>
+              <name>AWS DynamoDB Table: Large table size (over {$DYNAMODB.TABLE.SIZE.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>DynamoDB table size is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Index Level Metrics -->
+        <item>
+          <uuid>c074db7d0a5943498de2562088ca4ed1</uuid>
+          <name>AWS DynamoDB Index Consumed Read Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedReadCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of read capacity units consumed by the DynamoDB GSI</description>
+          <triggers>
+            <trigger>
+              <uuid>806aef52058d4fba9ed893da3adf96ad</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedReadCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}])/last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedReadCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}])*100&gt;{$DYNAMODB.INDEX.READ.CAPACITY.THRESHOLD}</expression>
+              <name>AWS DynamoDB Index: High read capacity utilization (over {$DYNAMODB.INDEX.READ.CAPACITY.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>DynamoDB index read capacity utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f71b9c8ec14f44e3bfe8de92e5530be3</uuid>
+          <name>AWS DynamoDB Index Consumed Write Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedWriteCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of write capacity units consumed by the DynamoDB GSI</description>
+          <triggers>
+            <trigger>
+              <uuid>a10688304f8f4537aa2e1d4bcc58b5cc</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConsumedWriteCapacityUnits,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}])/last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedWriteCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}])*100&gt;{$DYNAMODB.INDEX.WRITE.CAPACITY.THRESHOLD}</expression>
+              <name>AWS DynamoDB Index: High write capacity utilization (over {$DYNAMODB.INDEX.WRITE.CAPACITY.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>DynamoDB index write capacity utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f47fd39c7bec44d28128a089e64a1994</uuid>
+          <name>AWS DynamoDB Index Provisioned Read Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedReadCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of provisioned read capacity units for the DynamoDB GSI</description>
+        </item>
+        <item>
+          <uuid>1f0b3121ead8406486d544b27f7f78e6</uuid>
+          <name>AWS DynamoDB Index Provisioned Write Capacity Units</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProvisionedWriteCapacityUnits,{$STATISTIC},"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of provisioned write capacity units for the DynamoDB GSI</description>
+        </item>
+        <item>
+          <uuid>ff0d18400144490bbe8684dd1d4075c9</uuid>
+          <name>AWS DynamoDB Index Read Throttled Events</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of read requests that were throttled for the DynamoDB GSI</description>
+          <triggers>
+            <trigger>
+              <uuid>1631761da98f431690ba9c9c134c7a8f</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}])&gt;{$DYNAMODB.INDEX.READ.THROTTLE.THRESHOLD}</expression>
+              <name>AWS DynamoDB Index: Read throttling events detected (over {$DYNAMODB.INDEX.READ.THROTTLE.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>DynamoDB index is experiencing read throttling events</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>16f682b3294548a9bfb349e56aac99df</uuid>
+          <name>AWS DynamoDB Index Write Throttled Events</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of write requests that were throttled for the DynamoDB GSI</description>
+          <triggers>
+            <trigger>
+              <uuid>1271eaa3078e469b9dd6f060264eb742</uuid>
+              <expression>last(/Template Megazone AWS DynamoDB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteThrottledEvents,Sum,"Name=TableName,Value={$TABLE_NAME} Name=GlobalSecondaryIndexName,Value={$GSI_NAME}",{$ROLE_ARN}])&gt;{$DYNAMODB.INDEX.WRITE.THROTTLE.THRESHOLD}</expression>
+              <name>AWS DynamoDB Index: Write throttling events detected (over {$DYNAMODB.INDEX.WRITE.THROTTLE.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>DynamoDB index is experiencing write throttling events</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$TABLE_NAME}</macro>
+          <value>my-dynamodb-table</value>
+          <description>DynamoDB table name</description>
+        </macro>
+        <macro>
+          <macro>{$GSI_NAME}</macro>
+          <value>my-global-secondary-index</value>
+          <description>DynamoDB Global Secondary Index name</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/DynamoDB</value>
+          <description>CloudWatch namespace for DynamoDB</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where DynamoDB table is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.TABLE.READ.CAPACITY.THRESHOLD}</macro>
+          <value>80</value>
+          <description>DynamoDB table read capacity utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.TABLE.WRITE.CAPACITY.THRESHOLD}</macro>
+          <value>80</value>
+          <description>DynamoDB table write capacity utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.TABLE.READ.THROTTLE.THRESHOLD}</macro>
+          <value>1</value>
+          <description>DynamoDB table read throttling events threshold</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.TABLE.WRITE.THROTTLE.THRESHOLD}</macro>
+          <value>1</value>
+          <description>DynamoDB table write throttling events threshold</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.TABLE.SIZE.THRESHOLD}</macro>
+          <value>10737418240</value>
+          <description>DynamoDB table size threshold (10GB in bytes)</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.INDEX.READ.CAPACITY.THRESHOLD}</macro>
+          <value>80</value>
+          <description>DynamoDB index read capacity utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.INDEX.WRITE.CAPACITY.THRESHOLD}</macro>
+          <value>80</value>
+          <description>DynamoDB index write capacity utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.INDEX.READ.THROTTLE.THRESHOLD}</macro>
+          <value>1</value>
+          <description>DynamoDB index read throttling events threshold</description>
+        </macro>
+        <macro>
+          <macro>{$DYNAMODB.INDEX.WRITE.THROTTLE.THRESHOLD}</macro>
+          <value>1</value>
+          <description>DynamoDB index write throttling events threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

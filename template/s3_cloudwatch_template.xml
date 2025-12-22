@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>11fdd2f8582d4a27ab30b60cde511403</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>d520aa8cdf774b80bfc4627e653e26f9</uuid>
+      <template>Template Megazone AWS S3 CloudWatch</template>
+      <name>Template Megazone AWS S3 CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Bucket Level Metrics -->
+        <item>
+          <uuid>fe072ba9887e466887fc39da59585b10</uuid>
+          <name>AWS S3 Bucket Size Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BucketSizeBytes,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=StorageType,Value={$STORAGE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Size of objects in the S3 bucket</description>
+          <triggers>
+            <trigger>
+              <uuid>9045206df9b34371996dd64b9451195d</uuid>
+              <expression>last(/Template Megazone AWS S3 CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BucketSizeBytes,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=StorageType,Value={$STORAGE_TYPE}",{$ROLE_ARN}])&gt;{$S3.BUCKET.SIZE.THRESHOLD}</expression>
+              <name>AWS S3: Large bucket size (over {$S3.BUCKET.SIZE.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>S3 bucket size is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>ae5956d667324607b158cbe710b48443</uuid>
+          <name>AWS S3 Number of Objects</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NumberOfObjects,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=StorageType,Value={$STORAGE_TYPE}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of objects in the S3 bucket</description>
+        </item>
+        <!-- Request Level Metrics -->
+        <item>
+          <uuid>681f295c8b3241dcbe6c004ec988e86c</uuid>
+          <name>AWS S3 All Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},AllRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of HTTP requests made to S3 bucket</description>
+          <triggers>
+            <trigger>
+              <uuid>cde2791c63494fd0a59d203ade2e5234</uuid>
+              <expression>last(/Template Megazone AWS S3 CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},AllRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}])&lt;{$S3.MIN.REQUESTS.THRESHOLD}</expression>
+              <name>AWS S3: Low request count (less than {$S3.MIN.REQUESTS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>S3 request count is below minimum threshold - possible service issue</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>792aa7cc583f4ebb8e12568c576875d6</uuid>
+          <name>AWS S3 Get Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},GetRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP GET requests made to S3 bucket</description>
+        </item>
+        <item>
+          <uuid>51b5718705f94482b820350bb088a373</uuid>
+          <name>AWS S3 Put Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PutRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP PUT requests made to S3 bucket</description>
+        </item>
+        <item>
+          <uuid>84a33d1d39564d77b5c47c1d8f79aa27</uuid>
+          <name>AWS S3 Delete Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DeleteRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP DELETE requests made to S3 bucket</description>
+        </item>
+        <item>
+          <uuid>bede005854c24911b6335424352b0cc8</uuid>
+          <name>AWS S3 Head Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},HeadRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP HEAD requests made to S3 bucket</description>
+        </item>
+        <item>
+          <uuid>0851127dff304e4099d19ab3ec82c929</uuid>
+          <name>AWS S3 Post Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PostRequests,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP POST requests made to S3 bucket</description>
+        </item>
+        <item>
+          <uuid>248b19fae4b446428a045a926f1647f6</uuid>
+          <name>AWS S3 4XX Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4xxErrors,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP 4XX client error status codes</description>
+          <triggers>
+            <trigger>
+              <uuid>ae454bc7c6df49d5b9d837a8c8b768d8</uuid>
+              <expression>last(/Template Megazone AWS S3 CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},4xxErrors,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}])&gt;{$S3.4XX.ERRORS.THRESHOLD}</expression>
+              <name>AWS S3: High 4XX errors (over {$S3.4XX.ERRORS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of S3 4XX errors is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>fbe4f5d1d09d4307a0b6cc3e2512b683</uuid>
+          <name>AWS S3 5XX Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5xxErrors,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of HTTP 5XX server error status codes</description>
+          <triggers>
+            <trigger>
+              <uuid>9a512490e3324695b83f033754ffb04b</uuid>
+              <expression>last(/Template Megazone AWS S3 CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},5xxErrors,Sum,"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}])&gt;{$S3.5XX.ERRORS.THRESHOLD}</expression>
+              <name>AWS S3: High 5XX errors (over {$S3.5XX.ERRORS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of S3 5XX errors is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>cae8db3dbd3543e4a32af6aa23b3e592</uuid>
+          <name>AWS S3 First Byte Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FirstByteLatency,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Time from S3 receiving a complete request to when it starts returning the response</description>
+          <triggers>
+            <trigger>
+              <uuid>25dfe3dfeb464bffa9540aee70c7f65c</uuid>
+              <expression>last(/Template Megazone AWS S3 CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FirstByteLatency,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}])&gt;{$S3.FIRST.BYTE.LATENCY.THRESHOLD}</expression>
+              <name>AWS S3: High first byte latency (over {$S3.FIRST.BYTE.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>S3 first byte latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>0e9ce145708249e2a53e7f7ed7e470d1</uuid>
+          <name>AWS S3 Total Request Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TotalRequestLatency,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Elapsed time from first byte of request to last byte of response</description>
+          <triggers>
+            <trigger>
+              <uuid>b70a0e48999d4d39a41a9a2cb57e7fec</uuid>
+              <expression>last(/Template Megazone AWS S3 CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TotalRequestLatency,{$STATISTIC},"Name=BucketName,Value={$BUCKET_NAME} Name=FilterId,Value={$FILTER_ID}",{$ROLE_ARN}])&gt;{$S3.TOTAL.REQUEST.LATENCY.THRESHOLD}</expression>
+              <name>AWS S3: High total request latency (over {$S3.TOTAL.REQUEST.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>S3 total request latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$BUCKET_NAME}</macro>
+          <value>my-s3-bucket</value>
+          <description>S3 bucket name</description>
+        </macro>
+        <macro>
+          <macro>{$STORAGE_TYPE}</macro>
+          <value>StandardStorage</value>
+          <description>S3 storage type (StandardStorage, StandardIAStorage, etc.)</description>
+        </macro>
+        <macro>
+          <macro>{$FILTER_ID}</macro>
+          <value>EntireBucket</value>
+          <description>S3 filter ID for request metrics</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/S3</value>
+          <description>CloudWatch namespace for S3</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where S3 bucket is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$S3.BUCKET.SIZE.THRESHOLD}</macro>
+          <value>107374182400</value>
+          <description>S3 bucket size threshold (100GB in bytes)</description>
+        </macro>
+        <macro>
+          <macro>{$S3.MIN.REQUESTS.THRESHOLD}</macro>
+          <value>10</value>
+          <description>Minimum S3 requests threshold</description>
+        </macro>
+        <macro>
+          <macro>{$S3.4XX.ERRORS.THRESHOLD}</macro>
+          <value>50</value>
+          <description>S3 4XX errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$S3.5XX.ERRORS.THRESHOLD}</macro>
+          <value>5</value>
+          <description>S3 5XX errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$S3.FIRST.BYTE.LATENCY.THRESHOLD}</macro>
+          <value>1000</value>
+          <description>S3 first byte latency threshold (ms)</description>
+        </macro>
+        <macro>
+          <macro>{$S3.TOTAL.REQUEST.LATENCY.THRESHOLD}</macro>
+          <value>5000</value>
+          <description>S3 total request latency threshold (ms)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>6cf17e72b47c44b09a519975fc67285e</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>d3568ca1c3f845418e5ee560e9f98a47</uuid>
+      <template>Template Megazone AWS ElastiCache CloudWatch</template>
+      <name>Template Megazone AWS ElastiCache CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- ElastiCache Common Metrics -->
+        <item>
+          <uuid>9816784f19a3444fbe557ecc7d0edf27</uuid>
+          <name>AWS ElastiCache Cache Hits</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHits,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of successful key lookups in the cache</description>
+        </item>
+        <item>
+          <uuid>2297d02e4bc64ed994b5425cf4b1a0b7</uuid>
+          <name>AWS ElastiCache Cache Misses</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheMisses,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of unsuccessful key lookups in the cache</description>
+          <triggers>
+            <trigger>
+              <uuid>e22b54d296e14a9d835624f4372f511d</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheMisses,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])/(last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheHits,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])+last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CacheMisses,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]))*100&gt;{$ELASTICACHE.CACHE.MISS.RATE.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High cache miss rate (over {$ELASTICACHE.CACHE.MISS.RATE.THRESHOLD}%)</name>
+              <priority>WARNING</priority>
+              <description>ElastiCache cache miss rate is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>9cb413a919a94d37b7947da64b1bd691</uuid>
+          <name>AWS ElastiCache CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Percentage of CPU utilization for the cache cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>a42ce711ec274cf08b69cfe77008f7a3</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.CPU.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High CPU utilization (over {$ELASTICACHE.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>ElastiCache CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>6dcdf6591198444db8593b934beff80a</uuid>
+          <name>AWS ElastiCache Network Bytes In</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkBytesIn,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes the cache node has read from the network</description>
+          <triggers>
+            <trigger>
+              <uuid>6d11494c694044d5becee3bf9dff1463</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkBytesIn,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.NETWORK.IN.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High network bytes in (over {$ELASTICACHE.NETWORK.IN.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>ElastiCache network inbound traffic is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>a708ae785e754b788dad25e06e0a5082</uuid>
+          <name>AWS ElastiCache Network Bytes Out</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkBytesOut,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes the cache node has written to the network</description>
+          <triggers>
+            <trigger>
+              <uuid>45213e1fcf264b0684dadaa08a6b38e0</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkBytesOut,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.NETWORK.OUT.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High network bytes out (over {$ELASTICACHE.NETWORK.OUT.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>ElastiCache network outbound traffic is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>4afd3495ab9149f18823d6b0cc2b8dc7</uuid>
+          <name>AWS ElastiCache Current Connections</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CurrConnections,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of client connections to the cache</description>
+          <triggers>
+            <trigger>
+              <uuid>3a405e1749bf432f9d16b109a77e993a</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CurrConnections,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.CONNECTIONS.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High connection count (over {$ELASTICACHE.CONNECTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>ElastiCache connection count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>93edf87775e04240b6a4feaddb305360</uuid>
+          <name>AWS ElastiCache Evictions</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Evictions,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of non-expired items the cache evicted to make space for new writes</description>
+          <triggers>
+            <trigger>
+              <uuid>24bb92286b83463989eaa282b7e17e37</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Evictions,Sum,"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.EVICTIONS.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High evictions (over {$ELASTICACHE.EVICTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>ElastiCache eviction count is above threshold indicating memory pressure</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Redis Specific Metrics -->
+        <item>
+          <uuid>424fdc9745224caeb762568acdfeba82</uuid>
+          <name>AWS ElastiCache Database Memory Usage Percentage (Redis)</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseMemoryUsagePercentage,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Percentage of memory utilization for Redis cluster (Redis only)</description>
+          <triggers>
+            <trigger>
+              <uuid>9dcfb82d0eda4233a1f7450612402825</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseMemoryUsagePercentage,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.MEMORY.USAGE.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High memory usage (over {$ELASTICACHE.MEMORY.USAGE.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>ElastiCache Redis memory usage is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f17385dddcb74aa29e0a363e4465348d</uuid>
+          <name>AWS ElastiCache Replication Lag (Redis)</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReplicationLag,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>s</units>
+          <description>Number of seconds that a read replica lags behind the primary cluster (Redis only)</description>
+          <triggers>
+            <trigger>
+              <uuid>8660932612304d3394a99a5bf617ec5d</uuid>
+              <expression>last(/Template Megazone AWS ElastiCache CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReplicationLag,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}])&gt;{$ELASTICACHE.REPLICATION.LAG.THRESHOLD}</expression>
+              <name>AWS ElastiCache: High replication lag (over {$ELASTICACHE.REPLICATION.LAG.THRESHOLD}s)</name>
+              <priority>WARNING</priority>
+              <description>ElastiCache Redis replication lag is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Memcached Specific Metrics -->
+        <item>
+          <uuid>edd78b60561a45fd88258d929f63196b</uuid>
+          <name>AWS ElastiCache Bytes Used For Cache Items (Memcached)</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesUsedForCacheItems,{$STATISTIC},"Name=CacheClusterId,Value={$CACHE_CLUSTER_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Number of bytes used to store cache items (Memcached only)</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$CACHE_CLUSTER_ID}</macro>
+          <value>my-redis-cluster</value>
+          <description>ElastiCache cluster ID (Redis or Memcached)</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/ElastiCache</value>
+          <description>CloudWatch namespace for ElastiCache</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where ElastiCache cluster is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.CACHE.MISS.RATE.THRESHOLD}</macro>
+          <value>20</value>
+          <description>ElastiCache cache miss rate threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.CPU.THRESHOLD}</macro>
+          <value>80</value>
+          <description>ElastiCache CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.MEMORY.USAGE.THRESHOLD}</macro>
+          <value>80</value>
+          <description>ElastiCache memory usage threshold (%) - Redis only</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.NETWORK.IN.THRESHOLD}</macro>
+          <value>1073741824</value>
+          <description>ElastiCache network bytes in threshold (1GB)</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.NETWORK.OUT.THRESHOLD}</macro>
+          <value>1073741824</value>
+          <description>ElastiCache network bytes out threshold (1GB)</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.CONNECTIONS.THRESHOLD}</macro>
+          <value>100</value>
+          <description>ElastiCache connection count threshold</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.EVICTIONS.THRESHOLD}</macro>
+          <value>10</value>
+          <description>ElastiCache evictions threshold</description>
+        </macro>
+        <macro>
+          <macro>{$ELASTICACHE.REPLICATION.LAG.THRESHOLD}</macro>
+          <value>5</value>
+          <description>ElastiCache replication lag threshold (seconds) - Redis only</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

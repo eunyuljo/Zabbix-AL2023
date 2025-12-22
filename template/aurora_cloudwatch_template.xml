@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>44f7b52f58d04a7f9fec0f237e50ea12</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>62f4541ee00c4c9c97e155b3d90e573a</uuid>
+      <template>Template Megazone AWS Aurora CloudWatch</template>
+      <name>Template Megazone AWS Aurora CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Cluster Level Metrics -->
+        <item>
+          <uuid>682b6e0b1b68416e82180984c470faad</uuid>
+          <name>AWS Aurora Cluster Database Connections</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseConnections,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of database connections in use by Aurora cluster</description>
+          <triggers>
+            <trigger>
+              <uuid>f405b37cc38b4892b3bc22e4c250373b</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseConnections,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$AURORA.CLUSTER.CONNECTIONS.THRESHOLD}</expression>
+              <name>AWS Aurora Cluster: High database connections (over {$AURORA.CLUSTER.CONNECTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of cluster database connections is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>31da21db125c413297000fee2446660f</uuid>
+          <name>AWS Aurora Cluster CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>Average CPU utilization of Aurora cluster instances</description>
+          <triggers>
+            <trigger>
+              <uuid>700950ed98d4476a9a9e695e530ab9e0</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$AURORA.CLUSTER.CPU.THRESHOLD}</expression>
+              <name>AWS Aurora Cluster: High CPU utilization (over {$AURORA.CLUSTER.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>Cluster CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>1f314cdcf1f642809fecf829054a7154</uuid>
+          <name>AWS Aurora Replica Lag</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},AuroraReplicaLag,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Amount of lag when replicating updates from the primary instance</description>
+          <triggers>
+            <trigger>
+              <uuid>9859d84412b949339e44b07be8a9ee9a</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},AuroraReplicaLag,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$AURORA.REPLICA.LAG.THRESHOLD}</expression>
+              <name>AWS Aurora: High replica lag (over {$AURORA.REPLICA.LAG.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>Aurora replica lag is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>3db1036dc9394bc096cb250b35e604bf</uuid>
+          <name>AWS Aurora Read Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadLatency,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>s</units>
+          <description>Average amount of time taken per disk I/O operation for reads</description>
+          <triggers>
+            <trigger>
+              <uuid>6508f31b059c4b5ab4d5caa7989bca2a</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadLatency,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$AURORA.READ.LATENCY.THRESHOLD}</expression>
+              <name>AWS Aurora: High read latency (over {$AURORA.READ.LATENCY.THRESHOLD}s)</name>
+              <priority>WARNING</priority>
+              <description>Aurora read latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>de49037554c2428094b8e6d3223d3122</uuid>
+          <name>AWS Aurora Write Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteLatency,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>s</units>
+          <description>Average amount of time taken per disk I/O operation for writes</description>
+          <triggers>
+            <trigger>
+              <uuid>10bf17fd5209494bb89f8579121c4e50</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteLatency,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}])&gt;{$AURORA.WRITE.LATENCY.THRESHOLD}</expression>
+              <name>AWS Aurora: High write latency (over {$AURORA.WRITE.LATENCY.THRESHOLD}s)</name>
+              <priority>WARNING</priority>
+              <description>Aurora write latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>4d11086591b04e3d922e769a0f62e783</uuid>
+          <name>AWS Aurora Read Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadThroughput,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Average number of bytes read from disk per second</description>
+        </item>
+        <item>
+          <uuid>3e3c45fe1f574086aaa385ad81f1a9ae</uuid>
+          <name>AWS Aurora Write Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteThroughput,{$STATISTIC},"Name=DBClusterIdentifier,Value={$CLUSTER_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Average number of bytes written to disk per second</description>
+        </item>
+        <!-- Instance Level Metrics -->
+        <item>
+          <uuid>f0072a9e4dc34cef93c421b7c5d538bb</uuid>
+          <name>AWS Aurora Instance CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>CPU utilization of specific Aurora instance</description>
+          <triggers>
+            <trigger>
+              <uuid>487d81aeeb94446e96db70f8df7c97ad</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}])&gt;{$AURORA.INSTANCE.CPU.THRESHOLD}</expression>
+              <name>AWS Aurora Instance: High CPU utilization (over {$AURORA.INSTANCE.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>Instance CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f051c000e0af41499ee5deb3fc02e61b</uuid>
+          <name>AWS Aurora Instance Database Connections</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseConnections,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of database connections in use by specific Aurora instance</description>
+          <triggers>
+            <trigger>
+              <uuid>5bd117d9ec9441889bfce255c095b754</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseConnections,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}])&gt;{$AURORA.INSTANCE.CONNECTIONS.THRESHOLD}</expression>
+              <name>AWS Aurora Instance: High database connections (over {$AURORA.INSTANCE.CONNECTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of instance database connections is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>ce070a2d690844e88d8a1c1decd09d9c</uuid>
+          <name>AWS Aurora Instance Free Local Storage</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FreeLocalStorage,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Amount of available storage space for Aurora instance</description>
+          <triggers>
+            <trigger>
+              <uuid>53259932835a47ebb34495344f847e6c</uuid>
+              <expression>last(/Template Megazone AWS Aurora CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FreeLocalStorage,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}])&lt;{$AURORA.FREE.STORAGE.THRESHOLD}</expression>
+              <name>AWS Aurora Instance: Low free local storage (less than {$AURORA.FREE.STORAGE.THRESHOLD}B)</name>
+              <priority>HIGH</priority>
+              <description>Instance free local storage is below threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>dedaf30efbdf4d5b83f63d772a58753a</uuid>
+          <name>AWS Aurora Instance Network Receive Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkReceiveThroughput,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Incoming network traffic on the Aurora instance</description>
+        </item>
+        <item>
+          <uuid>a8bef0b23b8e4abcb3ac109402fa6d7d</uuid>
+          <name>AWS Aurora Instance Network Transmit Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkTransmitThroughput,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$INSTANCE_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Outgoing network traffic on the Aurora instance</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$CLUSTER_NAME}</macro>
+          <value>my-aurora-cluster</value>
+          <description>Aurora cluster identifier</description>
+        </macro>
+        <macro>
+          <macro>{$INSTANCE_NAME}</macro>
+          <value>my-aurora-instance-1</value>
+          <description>Aurora instance identifier</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/RDS</value>
+          <description>CloudWatch namespace for Aurora/RDS</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where Aurora is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.CLUSTER.CPU.THRESHOLD}</macro>
+          <value>80</value>
+          <description>Aurora cluster CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.CLUSTER.CONNECTIONS.THRESHOLD}</macro>
+          <value>80</value>
+          <description>Aurora cluster database connections threshold</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.INSTANCE.CPU.THRESHOLD}</macro>
+          <value>85</value>
+          <description>Aurora instance CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.INSTANCE.CONNECTIONS.THRESHOLD}</macro>
+          <value>80</value>
+          <description>Aurora instance database connections threshold</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.REPLICA.LAG.THRESHOLD}</macro>
+          <value>1000</value>
+          <description>Aurora replica lag threshold (ms)</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.READ.LATENCY.THRESHOLD}</macro>
+          <value>0.2</value>
+          <description>Aurora read latency threshold (seconds)</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.WRITE.LATENCY.THRESHOLD}</macro>
+          <value>0.2</value>
+          <description>Aurora write latency threshold (seconds)</description>
+        </macro>
+        <macro>
+          <macro>{$AURORA.FREE.STORAGE.THRESHOLD}</macro>
+          <value>2147483648</value>
+          <description>Aurora free storage threshold (2GB in bytes)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

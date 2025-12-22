@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>a220820dabff4372bb93a462988bdaa1</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>550c1beab31241a1aa6266af2958c354</uuid>
+      <template>Template Megazone AWS Site-to-Site VPN CloudWatch</template>
+      <name>Template Megazone AWS Site-to-Site VPN CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- VPN Connection Level Metrics -->
+        <item>
+          <uuid>2c72b0c9ab1e451eba22a3469d7f54d4</uuid>
+          <name>AWS VPN Connection State</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VpnConnectionState,{$STATISTIC},"Name=VpnId,Value={$VPN_CONNECTION_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>State of the VPN connection (0=DOWN, 1=UP)</description>
+          <triggers>
+            <trigger>
+              <uuid>7d10269d4cb74293b7ac55078f3e1cb9</uuid>
+              <expression>last(/Template Megazone AWS Site-to-Site VPN CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},VpnConnectionState,{$STATISTIC},"Name=VpnId,Value={$VPN_CONNECTION_ID}",{$ROLE_ARN}])=0</expression>
+              <name>AWS VPN: Connection is DOWN</name>
+              <priority>HIGH</priority>
+              <description>VPN connection is in DOWN state</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- VPN Tunnel Level Metrics -->
+        <item>
+          <uuid>b9b02c3f06b344a18e5cca6fe5cebf26</uuid>
+          <name>AWS VPN Tunnel State</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TunnelState,{$STATISTIC},"Name=VpnId,Value={$VPN_CONNECTION_ID} Name=TunnelIpAddress,Value={$TUNNEL_IP_ADDRESS}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>State of the VPN tunnel (0=DOWN, 1=UP)</description>
+          <triggers>
+            <trigger>
+              <uuid>857a4bc99ef94a1287ca44a7ee8cf958</uuid>
+              <expression>last(/Template Megazone AWS Site-to-Site VPN CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TunnelState,{$STATISTIC},"Name=VpnId,Value={$VPN_CONNECTION_ID} Name=TunnelIpAddress,Value={$TUNNEL_IP_ADDRESS}",{$ROLE_ARN}])=0</expression>
+              <name>AWS VPN: Tunnel is DOWN (IP: {$TUNNEL_IP_ADDRESS})</name>
+              <priority>WARNING</priority>
+              <description>VPN tunnel is in DOWN state</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>1fd32ea806f54cb5827f2e6c20bde590</uuid>
+          <name>AWS VPN Tunnel Packet Drop Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketDropCount,Sum,"Name=VpnId,Value={$VPN_CONNECTION_ID} Name=TunnelIpAddress,Value={$TUNNEL_IP_ADDRESS}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of packets dropped by the VPN tunnel</description>
+          <triggers>
+            <trigger>
+              <uuid>055bee0fba804a97b6ba153a9465c12d</uuid>
+              <expression>last(/Template Megazone AWS Site-to-Site VPN CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketDropCount,Sum,"Name=VpnId,Value={$VPN_CONNECTION_ID} Name=TunnelIpAddress,Value={$TUNNEL_IP_ADDRESS}",{$ROLE_ARN}])&gt;{$VPN.PACKET.DROP.THRESHOLD}</expression>
+              <name>AWS VPN: High packet drop count (over {$VPN.PACKET.DROP.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>VPN tunnel packet drop count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>138180df26fd42a5a63ca838ac878701</uuid>
+          <name>AWS VPN Tunnel Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TunnelLatency,{$STATISTIC},"Name=VpnId,Value={$VPN_CONNECTION_ID} Name=TunnelIpAddress,Value={$TUNNEL_IP_ADDRESS}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Latency of the VPN tunnel in milliseconds</description>
+          <triggers>
+            <trigger>
+              <uuid>774adf70363a4d319f4cd65f836dec8b</uuid>
+              <expression>last(/Template Megazone AWS Site-to-Site VPN CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TunnelLatency,{$STATISTIC},"Name=VpnId,Value={$VPN_CONNECTION_ID} Name=TunnelIpAddress,Value={$TUNNEL_IP_ADDRESS}",{$ROLE_ARN}])&gt;{$VPN.LATENCY.THRESHOLD}</expression>
+              <name>AWS VPN: High tunnel latency (over {$VPN.LATENCY.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>VPN tunnel latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$VPN_CONNECTION_ID}</macro>
+          <value>vpn-1234567890abcdef0</value>
+          <description>AWS Site-to-Site VPN connection ID</description>
+        </macro>
+        <macro>
+          <macro>{$TUNNEL_IP_ADDRESS}</macro>
+          <value>203.0.113.12</value>
+          <description>VPN tunnel IP address (customer gateway public IP)</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/VPN</value>
+          <description>CloudWatch namespace for Site-to-Site VPN</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where VPN connection is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$VPN.PACKET.DROP.THRESHOLD}</macro>
+          <value>100</value>
+          <description>VPN packet drop count threshold</description>
+        </macro>
+        <macro>
+          <macro>{$VPN.LATENCY.THRESHOLD}</macro>
+          <value>200</value>
+          <description>VPN tunnel latency threshold (ms)</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

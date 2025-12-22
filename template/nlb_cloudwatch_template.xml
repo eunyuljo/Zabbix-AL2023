@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>e86ad12fa3c44deb8bcf8e7907ff57e7</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>cd962839ae6c466790ff2a6d315068d4</uuid>
+      <template>Template Megazone AWS NLB CloudWatch</template>
+      <name>Template Megazone AWS NLB CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <item>
+          <uuid>ec77dcfe811145fe8b9c7992d43264e8</uuid>
+          <name>AWS NLB Active Flow Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ActiveFlowCount,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of concurrent flows (or connections) from clients to targets</description>
+        </item>
+        <item>
+          <uuid>14ab95e8af5348fc8ccca89b7b7893b8</uuid>
+          <name>AWS NLB New Flow Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NewFlowCount,Sum,"Name=LoadBalancer,Value={$NLB_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of new flows (or connections) established from clients to targets</description>
+        </item>
+        <item>
+          <uuid>7859f0ac9eb141f7bfd6699946ee870b</uuid>
+          <name>AWS NLB Processed Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ProcessedBytes,Sum,"Name=LoadBalancer,Value={$NLB_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Total number of bytes processed by the load balancer</description>
+        </item>
+        <item>
+          <uuid>f8304a8090e74b4d8b6a01182d808666</uuid>
+          <name>AWS NLB Healthy Host Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},HealthyHostCount,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME} Name=TargetGroup,Value={$TG_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of targets that are considered healthy</description>
+          <triggers>
+            <trigger>
+              <uuid>27f3897cb7224ff7966d1f6c8b5279a7</uuid>
+              <expression>last(/Template Megazone AWS NLB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},HealthyHostCount,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME} Name=TargetGroup,Value={$TG_NAME}",{$ROLE_ARN}])&lt;{$NLB.HEALTHY.MIN.THRESHOLD}</expression>
+              <name>AWS NLB: Low healthy host count (less than {$NLB.HEALTHY.MIN.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Number of healthy hosts is below minimum threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>acfd1f0467d44ec6917a28b368d420a3</uuid>
+          <name>AWS NLB Unhealthy Host Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},UnHealthyHostCount,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME} Name=TargetGroup,Value={$TG_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of targets that are considered unhealthy</description>
+          <triggers>
+            <trigger>
+              <uuid>a252e33449e34df7849ede4970cefc08</uuid>
+              <expression>last(/Template Megazone AWS NLB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},UnHealthyHostCount,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME} Name=TargetGroup,Value={$TG_NAME}",{$ROLE_ARN}])&gt;{$NLB.UNHEALTHY.MAX.THRESHOLD}</expression>
+              <name>AWS NLB: High unhealthy host count (over {$NLB.UNHEALTHY.MAX.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of unhealthy hosts is above maximum threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>eaaf6667bcc742bfba1529804351312c</uuid>
+          <name>AWS NLB Target Response Time</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TargetResponseTime,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME} Name=TargetGroup,Value={$TG_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>s</units>
+          <description>Time elapsed, in seconds, after the request leaves the load balancer until a response from the target is received</description>
+          <triggers>
+            <trigger>
+              <uuid>6a73889a23d44f17b8d0de8e4380ffac</uuid>
+              <expression>last(/Template Megazone AWS NLB CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TargetResponseTime,{$STATISTIC},"Name=LoadBalancer,Value={$NLB_NAME} Name=TargetGroup,Value={$TG_NAME}",{$ROLE_ARN}])&gt;{$NLB.RESPONSE.TIME.THRESHOLD}</expression>
+              <name>AWS NLB: High target response time (over {$NLB.RESPONSE.TIME.THRESHOLD}s)</name>
+              <priority>WARNING</priority>
+              <description>Target response time is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$NLB_NAME}</macro>
+          <value>net/my-nlb-name</value>
+          <description>NLB LoadBalancer name</description>
+        </macro>
+        <macro>
+          <macro>{$TG_NAME}</macro>
+          <value>targetgroup/my-nlb-target-group/1234567890123456</value>
+          <description>NLB TargetGroup name</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/NetworkELB</value>
+          <description>CloudWatch namespace for Network Load Balancer</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where the NLB is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$NLB.HEALTHY.MIN.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Minimum number of healthy hosts threshold</description>
+        </macro>
+        <macro>
+          <macro>{$NLB.UNHEALTHY.MAX.THRESHOLD}</macro>
+          <value>0</value>
+          <description>Maximum number of unhealthy hosts threshold</description>
+        </macro>
+        <macro>
+          <macro>{$NLB.RESPONSE.TIME.THRESHOLD}</macro>
+          <value>5</value>
+          <description>Target response time threshold in seconds</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>34a2788838a7452cb142a7ce9d2a84af</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>0e0c5c5b23634f3685bd540e68eb6e56</uuid>
+      <template>Template Megazone AWS EFS CloudWatch</template>
+      <name>Template Megazone AWS EFS CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- File System Level Metrics -->
+        <item>
+          <uuid>14092405d83143d19fb939da4e2ca132</uuid>
+          <name>AWS EFS Total IO Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TotalIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Total bytes for all file system operations including data read, data write, and metadata operations</description>
+          <triggers>
+            <trigger>
+              <uuid>c99d094db97d4c18af2ce026cd9d1dbe</uuid>
+              <expression>last(/Template Megazone AWS EFS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},TotalIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}])&gt;{$EFS.TOTAL.IO.THRESHOLD}</expression>
+              <name>AWS EFS: High total IO bytes (over {$EFS.TOTAL.IO.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>EFS total I/O bytes is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>c53ca992c3fd4e11b51744d740aa9090</uuid>
+          <name>AWS EFS Client Connections</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ClientConnections,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of client connections to the EFS file system</description>
+          <triggers>
+            <trigger>
+              <uuid>3826dbf634a742b1a76ab5158eef2124</uuid>
+              <expression>last(/Template Megazone AWS EFS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ClientConnections,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}])&gt;{$EFS.CLIENT.CONNECTIONS.THRESHOLD}</expression>
+              <name>AWS EFS: High client connections (over {$EFS.CLIENT.CONNECTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>EFS client connections are above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>4ea7df3fc7c2454989253da0c6554909</uuid>
+          <name>AWS EFS Data Read IO Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DataReadIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Bytes for each data read operation</description>
+          <triggers>
+            <trigger>
+              <uuid>9eeb17b200744735a2b3f9d53806e5c3</uuid>
+              <expression>last(/Template Megazone AWS EFS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DataReadIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}])&gt;{$EFS.DATA.READ.IO.THRESHOLD}</expression>
+              <name>AWS EFS: High data read IO (over {$EFS.DATA.READ.IO.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>EFS data read I/O bytes is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>5074cb192d68484592873d3a1a3dc96b</uuid>
+          <name>AWS EFS Data Write IO Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DataWriteIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Bytes for each data write operation</description>
+          <triggers>
+            <trigger>
+              <uuid>a16a18bc685949a99430c70521d7eae3</uuid>
+              <expression>last(/Template Megazone AWS EFS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DataWriteIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}])&gt;{$EFS.DATA.WRITE.IO.THRESHOLD}</expression>
+              <name>AWS EFS: High data write IO (over {$EFS.DATA.WRITE.IO.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>EFS data write I/O bytes is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>aa315153e39b423e99e4a3a29b9766bd</uuid>
+          <name>AWS EFS Metadata IO Bytes</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},MetadataIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Bytes for each metadata operation including directory lookups, file attribute queries</description>
+          <triggers>
+            <trigger>
+              <uuid>fe861367e42a484d838e2ada8d3179f4</uuid>
+              <expression>last(/Template Megazone AWS EFS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},MetadataIOBytes,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}])&gt;{$EFS.METADATA.IO.THRESHOLD}</expression>
+              <name>AWS EFS: High metadata IO (over {$EFS.METADATA.IO.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>EFS metadata I/O bytes is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>677d20a65049436598963eb2b634e597</uuid>
+          <name>AWS EFS Permission Requests</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PermissionRequests,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of client requests for which the file system returned a permissions-related error</description>
+          <triggers>
+            <trigger>
+              <uuid>4fda8d00008f420e95747345eaee75b8</uuid>
+              <expression>last(/Template Megazone AWS EFS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PermissionRequests,Sum,"Name=FileSystemId,Value={$FILE_SYSTEM_ID}",{$ROLE_ARN}])&gt;{$EFS.PERMISSION.REQUESTS.THRESHOLD}</expression>
+              <name>AWS EFS: High permission requests (over {$EFS.PERMISSION.REQUESTS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>EFS permission-related errors are above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$FILE_SYSTEM_ID}</macro>
+          <value>fs-12345678</value>
+          <description>EFS File System ID</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/EFS</value>
+          <description>CloudWatch namespace for EFS</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where EFS is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Sum</value>
+          <description>CloudWatch statistic type (Sum for EFS metrics)</description>
+        </macro>
+        <macro>
+          <macro>{$EFS.TOTAL.IO.THRESHOLD}</macro>
+          <value>10737418240</value>
+          <description>EFS total I/O bytes threshold (10GB)</description>
+        </macro>
+        <macro>
+          <macro>{$EFS.CLIENT.CONNECTIONS.THRESHOLD}</macro>
+          <value>100</value>
+          <description>EFS client connections threshold</description>
+        </macro>
+        <macro>
+          <macro>{$EFS.DATA.READ.IO.THRESHOLD}</macro>
+          <value>5368709120</value>
+          <description>EFS data read I/O bytes threshold (5GB)</description>
+        </macro>
+        <macro>
+          <macro>{$EFS.DATA.WRITE.IO.THRESHOLD}</macro>
+          <value>5368709120</value>
+          <description>EFS data write I/O bytes threshold (5GB)</description>
+        </macro>
+        <macro>
+          <macro>{$EFS.METADATA.IO.THRESHOLD}</macro>
+          <value>1073741824</value>
+          <description>EFS metadata I/O bytes threshold (1GB)</description>
+        </macro>
+        <macro>
+          <macro>{$EFS.PERMISSION.REQUESTS.THRESHOLD}</macro>
+          <value>100</value>
+          <description>EFS permission requests threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

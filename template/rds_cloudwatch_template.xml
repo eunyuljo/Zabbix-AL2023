@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>5e873986fd5c493bbdec0fe7ca998dbc</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>8f942f855f92442d9666c8df92598656</uuid>
+      <template>Template Megazone AWS RDS CloudWatch</template>
+      <name>Template Megazone AWS RDS CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- DB Instance Level Metrics -->
+        <item>
+          <uuid>b83d61321cd44689a1b3743b7ea18b25</uuid>
+          <name>AWS RDS CPU Utilization</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>%</units>
+          <description>CPU utilization of the RDS DB instance</description>
+          <triggers>
+            <trigger>
+              <uuid>d8cd243a36a243d3b1451aea31588e09</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},CPUUtilization,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&gt;{$RDS.CPU.THRESHOLD}</expression>
+              <name>AWS RDS: High CPU utilization (over {$RDS.CPU.THRESHOLD}%)</name>
+              <priority>HIGH</priority>
+              <description>RDS DB instance CPU utilization is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>7f9dd1febe02492daa463f383f36e165</uuid>
+          <name>AWS RDS Database Connections</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseConnections,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of database connections in use by the RDS DB instance</description>
+          <triggers>
+            <trigger>
+              <uuid>5b5f10c235944e988b009511fc2a0912</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DatabaseConnections,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&gt;{$RDS.CONNECTIONS.THRESHOLD}</expression>
+              <name>AWS RDS: High database connections (over {$RDS.CONNECTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Number of RDS database connections is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>8318bae34c7942248043fefdfb3decab</uuid>
+          <name>AWS RDS Freeable Memory</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FreeableMemory,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Amount of available RAM for the RDS DB instance</description>
+          <triggers>
+            <trigger>
+              <uuid>90ae496b60024f168c02825c6669fa92</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FreeableMemory,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&lt;{$RDS.FREE.MEMORY.THRESHOLD}</expression>
+              <name>AWS RDS: Low freeable memory (less than {$RDS.FREE.MEMORY.THRESHOLD}B)</name>
+              <priority>HIGH</priority>
+              <description>RDS DB instance freeable memory is below threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>d7c173a88b6b4f18934c37aff0b6a83c</uuid>
+          <name>AWS RDS Free Storage Space</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FreeStorageSpace,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Amount of available storage space for the RDS DB instance</description>
+          <triggers>
+            <trigger>
+              <uuid>7ed3d34d86f646918a2adb6c7bd8eda0</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},FreeStorageSpace,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&lt;{$RDS.FREE.STORAGE.THRESHOLD}</expression>
+              <name>AWS RDS: Low free storage space (less than {$RDS.FREE.STORAGE.THRESHOLD}B)</name>
+              <priority>HIGH</priority>
+              <description>RDS DB instance free storage space is below threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>f93d8864bf0f4100b1ebce0a22c11c34</uuid>
+          <name>AWS RDS Read Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadLatency,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>s</units>
+          <description>Average amount of time taken per disk I/O operation for read operations</description>
+          <triggers>
+            <trigger>
+              <uuid>1ea59f51a162467983d0d199f505ca1a</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadLatency,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&gt;{$RDS.READ.LATENCY.THRESHOLD}</expression>
+              <name>AWS RDS: High read latency (over {$RDS.READ.LATENCY.THRESHOLD}s)</name>
+              <priority>WARNING</priority>
+              <description>RDS DB instance read latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>a2ba2f49d8b84f6b84ea12df36a3c834</uuid>
+          <name>AWS RDS Write Latency</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteLatency,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>s</units>
+          <description>Average amount of time taken per disk I/O operation for write operations</description>
+          <triggers>
+            <trigger>
+              <uuid>b22ad02153a94377b635039147488824</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteLatency,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&gt;{$RDS.WRITE.LATENCY.THRESHOLD}</expression>
+              <name>AWS RDS: High write latency (over {$RDS.WRITE.LATENCY.THRESHOLD}s)</name>
+              <priority>WARNING</priority>
+              <description>RDS DB instance write latency is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>95f9f6913d2a4c84a91bea30e7df7178</uuid>
+          <name>AWS RDS Read Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadThroughput,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Average number of bytes read from disk per second</description>
+        </item>
+        <item>
+          <uuid>2dec1113ab8e4c9f82c3389c8c84175d</uuid>
+          <name>AWS RDS Write Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteThroughput,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Average number of bytes written to disk per second</description>
+        </item>
+        <item>
+          <uuid>4890f2bfc758441b919f306dce70fdf5</uuid>
+          <name>AWS RDS Read IOPS</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadIOPS,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>IOPS</units>
+          <description>Average number of disk read I/O operations per second</description>
+          <triggers>
+            <trigger>
+              <uuid>e17c3797fd204c84a54b8b3e634fc918</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ReadIOPS,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&gt;{$RDS.READ.IOPS.THRESHOLD}</expression>
+              <name>AWS RDS: High read IOPS (over {$RDS.READ.IOPS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>RDS DB instance read IOPS is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>d50022a04dec47edbdd6bd6b6fefaa4c</uuid>
+          <name>AWS RDS Write IOPS</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteIOPS,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>IOPS</units>
+          <description>Average number of disk write I/O operations per second</description>
+          <triggers>
+            <trigger>
+              <uuid>ac9e96ee2dac4e64a1b580ee214bd26d</uuid>
+              <expression>last(/Template Megazone AWS RDS CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},WriteIOPS,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}])&gt;{$RDS.WRITE.IOPS.THRESHOLD}</expression>
+              <name>AWS RDS: High write IOPS (over {$RDS.WRITE.IOPS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>RDS DB instance write IOPS is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>a9fd94e3b753435b8055a1e434f274c3</uuid>
+          <name>AWS RDS Network Receive Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkReceiveThroughput,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Incoming network traffic on the RDS DB instance</description>
+        </item>
+        <item>
+          <uuid>11c9ffd897b74e938e75f8c21c18e96d</uuid>
+          <name>AWS RDS Network Transmit Throughput</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},NetworkTransmitThroughput,{$STATISTIC},"Name=DBInstanceIdentifier,Value={$DB_INSTANCE_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B/s</units>
+          <description>Outgoing network traffic on the RDS DB instance</description>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$DB_INSTANCE_ID}</macro>
+          <value>my-rds-instance</value>
+          <description>RDS DB instance identifier</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/RDS</value>
+          <description>CloudWatch namespace for RDS</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where RDS instance is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.CPU.THRESHOLD}</macro>
+          <value>80</value>
+          <description>RDS CPU utilization threshold (%)</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.CONNECTIONS.THRESHOLD}</macro>
+          <value>80</value>
+          <description>RDS database connections threshold</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.FREE.MEMORY.THRESHOLD}</macro>
+          <value>536870912</value>
+          <description>RDS free memory threshold (512MB in bytes)</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.FREE.STORAGE.THRESHOLD}</macro>
+          <value>2147483648</value>
+          <description>RDS free storage threshold (2GB in bytes)</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.READ.LATENCY.THRESHOLD}</macro>
+          <value>0.2</value>
+          <description>RDS read latency threshold (seconds)</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.WRITE.LATENCY.THRESHOLD}</macro>
+          <value>0.2</value>
+          <description>RDS write latency threshold (seconds)</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.READ.IOPS.THRESHOLD}</macro>
+          <value>8000</value>
+          <description>RDS read IOPS threshold</description>
+        </macro>
+        <macro>
+          <macro>{$RDS.WRITE.IOPS.THRESHOLD}</macro>
+          <value>8000</value>
+          <description>RDS write IOPS threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>75217d7f4079483a80696623f1ed9d53</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>fd00c19294064866966b16612984ead9</uuid>
+      <template>Template Megazone AWS Transit Gateway CloudWatch</template>
+      <name>Template Megazone AWS Transit Gateway CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Transit Gateway Level Metrics -->
+        <item>
+          <uuid>af25dd238a3444769cceca838fccffba</uuid>
+          <name>AWS Transit Gateway Bytes In</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesIn,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Total bytes received by the Transit Gateway</description>
+          <triggers>
+            <trigger>
+              <uuid>203dfa9687ec458bad02ddfb33b05256</uuid>
+              <expression>last(/Template Megazone AWS Transit Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesIn,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}])&gt;{$TGW.BYTES.IN.THRESHOLD}</expression>
+              <name>AWS Transit Gateway: High bytes in (over {$TGW.BYTES.IN.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>Transit Gateway inbound data volume is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>039e4d1e6bfb4348afaa11406431cb99</uuid>
+          <name>AWS Transit Gateway Bytes Out</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOut,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Total bytes transmitted by the Transit Gateway</description>
+          <triggers>
+            <trigger>
+              <uuid>87a728342db04d57b34b7cd35bffcca2</uuid>
+              <expression>last(/Template Megazone AWS Transit Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOut,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}])&gt;{$TGW.BYTES.OUT.THRESHOLD}</expression>
+              <name>AWS Transit Gateway: High bytes out (over {$TGW.BYTES.OUT.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>Transit Gateway outbound data volume is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>e2dd007700a748a2a19f3bf983353c9d</uuid>
+          <name>AWS Transit Gateway Packets In</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketsIn,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of packets received by the Transit Gateway</description>
+        </item>
+        <item>
+          <uuid>2173239478a5406d97af1b5cf644fa58</uuid>
+          <name>AWS Transit Gateway Packets Out</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketsOut,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Total number of packets transmitted by the Transit Gateway</description>
+        </item>
+        <item>
+          <uuid>e4309f56217c40e6825521465f78f3ff</uuid>
+          <name>AWS Transit Gateway Packet Drop Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketDropCount,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of packets dropped by the Transit Gateway</description>
+          <triggers>
+            <trigger>
+              <uuid>23c3a475106a42feaff76ec3c3deb90e</uuid>
+              <expression>last(/Template Megazone AWS Transit Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketDropCount,Sum,"Name=TransitGateway,Value={$TGW_ID}",{$ROLE_ARN}])&gt;{$TGW.PACKET.DROP.THRESHOLD}</expression>
+              <name>AWS Transit Gateway: High packet drop count (over {$TGW.PACKET.DROP.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Transit Gateway packet drop count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <!-- Attachment Level Metrics -->
+        <item>
+          <uuid>6b5de24ddcca412dacca04ab390c4f46</uuid>
+          <name>AWS Transit Gateway Attachment Bytes In</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesIn,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Bytes received by the specific Transit Gateway attachment</description>
+          <triggers>
+            <trigger>
+              <uuid>6fb6668786d940c6b695848f6b0d0124</uuid>
+              <expression>last(/Template Megazone AWS Transit Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesIn,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}])&gt;{$TGW.ATTACHMENT.BYTES.IN.THRESHOLD}</expression>
+              <name>AWS Transit Gateway Attachment: High bytes in (over {$TGW.ATTACHMENT.BYTES.IN.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>Transit Gateway attachment inbound data volume is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>690d4a7df9b64c5f8e033892cb13bb1d</uuid>
+          <name>AWS Transit Gateway Attachment Bytes Out</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOut,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>B</units>
+          <description>Bytes transmitted by the specific Transit Gateway attachment</description>
+          <triggers>
+            <trigger>
+              <uuid>b7a8c3750ca4498cba1a3f8eb03db0ec</uuid>
+              <expression>last(/Template Megazone AWS Transit Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},BytesOut,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}])&gt;{$TGW.ATTACHMENT.BYTES.OUT.THRESHOLD}</expression>
+              <name>AWS Transit Gateway Attachment: High bytes out (over {$TGW.ATTACHMENT.BYTES.OUT.THRESHOLD}B)</name>
+              <priority>WARNING</priority>
+              <description>Transit Gateway attachment outbound data volume is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>91039f0ac2794e0f89615ed1bb4707be</uuid>
+          <name>AWS Transit Gateway Attachment Packets In</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketsIn,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of packets received by the specific Transit Gateway attachment</description>
+        </item>
+        <item>
+          <uuid>70abe8e01f4b4bb0b31a2096310149b6</uuid>
+          <name>AWS Transit Gateway Attachment Packets Out</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketsOut,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of packets transmitted by the specific Transit Gateway attachment</description>
+        </item>
+        <item>
+          <uuid>55d322dae7414e1898a616a53100fa0a</uuid>
+          <name>AWS Transit Gateway Attachment Packet Drop Count</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketDropCount,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of packets dropped by the specific Transit Gateway attachment</description>
+          <triggers>
+            <trigger>
+              <uuid>3ec36e4ed7a04855bd6e5c7aeccc8112</uuid>
+              <expression>last(/Template Megazone AWS Transit Gateway CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},PacketDropCount,Sum,"Name=TransitGatewayAttachment,Value={$ATTACHMENT_ID}",{$ROLE_ARN}])&gt;{$TGW.ATTACHMENT.PACKET.DROP.THRESHOLD}</expression>
+              <name>AWS Transit Gateway Attachment: High packet drop count (over {$TGW.ATTACHMENT.PACKET.DROP.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Transit Gateway attachment packet drop count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$TGW_ID}</macro>
+          <value>tgw-1234567890abcdef0</value>
+          <description>AWS Transit Gateway ID</description>
+        </macro>
+        <macro>
+          <macro>{$ATTACHMENT_ID}</macro>
+          <value>tgw-attach-1234567890abcdef0</value>
+          <description>AWS Transit Gateway Attachment ID (VPC/VPN/DX/Peering)</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/TransitGateway</value>
+          <description>CloudWatch namespace for Transit Gateway</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where Transit Gateway is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Sum</value>
+          <description>CloudWatch statistic type (Sum for byte/packet counts)</description>
+        </macro>
+        <macro>
+          <macro>{$TGW.BYTES.IN.THRESHOLD}</macro>
+          <value>10737418240</value>
+          <description>Transit Gateway bytes in threshold (10GB)</description>
+        </macro>
+        <macro>
+          <macro>{$TGW.BYTES.OUT.THRESHOLD}</macro>
+          <value>10737418240</value>
+          <description>Transit Gateway bytes out threshold (10GB)</description>
+        </macro>
+        <macro>
+          <macro>{$TGW.PACKET.DROP.THRESHOLD}</macro>
+          <value>1000</value>
+          <description>Transit Gateway packet drop count threshold</description>
+        </macro>
+        <macro>
+          <macro>{$TGW.ATTACHMENT.BYTES.IN.THRESHOLD}</macro>
+          <value>5368709120</value>
+          <description>Transit Gateway attachment bytes in threshold (5GB)</description>
+        </macro>
+        <macro>
+          <macro>{$TGW.ATTACHMENT.BYTES.OUT.THRESHOLD}</macro>
+          <value>5368709120</value>
+          <description>Transit Gateway attachment bytes out threshold (5GB)</description>
+        </macro>
+        <macro>
+          <macro>{$TGW.ATTACHMENT.PACKET.DROP.THRESHOLD}</macro>
+          <value>500</value>
+          <description>Transit Gateway attachment packet drop count threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>

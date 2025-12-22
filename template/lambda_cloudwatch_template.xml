@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+  <version>7.0</version>
+  <template_groups>
+    <template_group>
+      <uuid>16a442eb95424301b6bbc4a84f3a1857</uuid>
+      <name>Templates/Megazone AWS Monitoring</name>
+    </template_group>
+  </template_groups>
+  <templates>
+    <template>
+      <uuid>6b61127a0a07469cb88dee2019ae081e</uuid>
+      <template>Template Megazone AWS Lambda CloudWatch</template>
+      <name>Template Megazone AWS Lambda CloudWatch</name>
+      <groups>
+        <group>
+          <name>Templates/Megazone AWS Monitoring</name>
+        </group>
+      </groups>
+      <items>
+        <!-- Function Level Metrics -->
+        <item>
+          <uuid>98e2c46bac9f45fb99cf326f913a058b</uuid>
+          <name>AWS Lambda Function Duration</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Duration,Average,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units>ms</units>
+          <description>Average duration of Lambda function execution</description>
+          <triggers>
+            <trigger>
+              <uuid>8c7309f61d3045f5ae6a1e986071f562</uuid>
+              <expression>last(/Template Megazone AWS Lambda CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Duration,Average,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}])&gt;{$LAMBDA.DURATION.THRESHOLD}</expression>
+              <name>AWS Lambda: High function duration (over {$LAMBDA.DURATION.THRESHOLD}ms)</name>
+              <priority>WARNING</priority>
+              <description>Lambda function execution duration is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>3301f4fcdcfd4dd08b1cff2acadbc644</uuid>
+          <name>AWS Lambda Function Invocations</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Invocations,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of times Lambda function is invoked</description>
+        </item>
+        <item>
+          <uuid>5f90d7b3ee01499888ff9cbc5371dfb4</uuid>
+          <name>AWS Lambda Function Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Errors,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of Lambda function invocations that result in errors</description>
+          <triggers>
+            <trigger>
+              <uuid>5c81e98071ac4c87bcd90df7fc6cd4dc</uuid>
+              <expression>last(/Template Megazone AWS Lambda CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Errors,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}])&gt;{$LAMBDA.ERRORS.THRESHOLD}</expression>
+              <name>AWS Lambda: High error count (over {$LAMBDA.ERRORS.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Lambda function error count is above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>9d55fef418a34981a5d156e24e369e6b</uuid>
+          <name>AWS Lambda Function Throttles</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Throttles,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of Lambda function invocations that are throttled</description>
+          <triggers>
+            <trigger>
+              <uuid>9f2c3255d0a84fb886a1097a098da834</uuid>
+              <expression>last(/Template Megazone AWS Lambda CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},Throttles,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}])&gt;{$LAMBDA.THROTTLES.THRESHOLD}</expression>
+              <name>AWS Lambda: Function throttling detected (over {$LAMBDA.THROTTLES.THRESHOLD})</name>
+              <priority>HIGH</priority>
+              <description>Lambda function is being throttled due to concurrency limits</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>a279eaeaa4944aceaa8b588200230b5b</uuid>
+          <name>AWS Lambda Function Dead Letter Errors</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DeadLetterErrors,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of times Lambda fails to send an event to the dead letter queue</description>
+          <triggers>
+            <trigger>
+              <uuid>e80bf6147b0747e0b2c2203775f1b318</uuid>
+              <expression>last(/Template Megazone AWS Lambda CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},DeadLetterErrors,Sum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}])&gt;{$LAMBDA.DEAD.LETTER.ERRORS.THRESHOLD}</expression>
+              <name>AWS Lambda: High dead letter errors (over {$LAMBDA.DEAD.LETTER.ERRORS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Lambda function dead letter queue errors are above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+        <item>
+          <uuid>927abdfee5924a82b97dc3024bd04a0b</uuid>
+          <name>AWS Lambda Concurrent Executions</name>
+          <type>EXTERNAL</type>
+          <key>aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConcurrentExecutions,Maximum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}]</key>
+          <delay>1m</delay>
+          <history>90d</history>
+          <trends>365d</trends>
+          <value_type>FLOAT</value_type>
+          <units></units>
+          <description>Number of Lambda function instances processing events simultaneously</description>
+          <triggers>
+            <trigger>
+              <uuid>2a80dcf3269f4479bb2651a409ee0c90</uuid>
+              <expression>last(/Template Megazone AWS Lambda CloudWatch/aws-cloudwatch-metric[{$ACCOUNT_ID},{$REGION},{$NAMESPACE},ConcurrentExecutions,Maximum,"Name=FunctionName,Value={$FUNCTION_NAME}",{$ROLE_ARN}])&gt;{$LAMBDA.CONCURRENT.EXECUTIONS.THRESHOLD}</expression>
+              <name>AWS Lambda: High concurrent executions (over {$LAMBDA.CONCURRENT.EXECUTIONS.THRESHOLD})</name>
+              <priority>WARNING</priority>
+              <description>Lambda function concurrent executions are above threshold</description>
+            </trigger>
+          </triggers>
+        </item>
+      </items>
+      <macros>
+        <macro>
+          <macro>{$ACCOUNT_ID}</macro>
+          <value>626635430480</value>
+          <description>AWS Account ID for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$FUNCTION_NAME}</macro>
+          <value>my-lambda-function</value>
+          <description>Lambda function name</description>
+        </macro>
+        <macro>
+          <macro>{$NAMESPACE}</macro>
+          <value>AWS/Lambda</value>
+          <description>CloudWatch namespace for Lambda</description>
+        </macro>
+        <macro>
+          <macro>{$REGION}</macro>
+          <value>ap-northeast-2</value>
+          <description>AWS Region where Lambda function is located</description>
+        </macro>
+        <macro>
+          <macro>{$ROLE_ARN}</macro>
+          <value>arn:aws:iam::626635430480:role/ZabbixMonitoringRole</value>
+          <description>IAM Role ARN for CloudWatch access</description>
+        </macro>
+        <macro>
+          <macro>{$STATISTIC}</macro>
+          <value>Average</value>
+          <description>Default CloudWatch statistic type</description>
+        </macro>
+        <macro>
+          <macro>{$LAMBDA.DURATION.THRESHOLD}</macro>
+          <value>30000</value>
+          <description>Lambda function duration threshold (ms) - 30 seconds</description>
+        </macro>
+        <macro>
+          <macro>{$LAMBDA.ERRORS.THRESHOLD}</macro>
+          <value>5</value>
+          <description>Lambda function error count threshold</description>
+        </macro>
+        <macro>
+          <macro>{$LAMBDA.THROTTLES.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Lambda function throttles threshold (any throttling is concerning)</description>
+        </macro>
+        <macro>
+          <macro>{$LAMBDA.DEAD.LETTER.ERRORS.THRESHOLD}</macro>
+          <value>1</value>
+          <description>Lambda dead letter errors threshold</description>
+        </macro>
+        <macro>
+          <macro>{$LAMBDA.CONCURRENT.EXECUTIONS.THRESHOLD}</macro>
+          <value>500</value>
+          <description>Lambda concurrent executions threshold</description>
+        </macro>
+      </macros>
+    </template>
+  </templates>
+</zabbix_export>
