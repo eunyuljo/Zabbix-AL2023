@@ -164,48 +164,48 @@ sudo -u zabbix python3 -c "import zbxtg_settings; print('설정 로드 성공')"
   포맷: 채널명;타입;채팅ID
   내용: customer-alert;channel;-1003682743283
 
-zbxtg.py의 캐시 로직 (zbxtg.py:805-817)
+    zbxtg.py의 캐시 로직 (zbxtg.py:805-817)
 
-# 1단계: 캐시에서 UID 찾기
-uid = tg.get_uid_from_cache(zbx_to)
+    # 1단계: 캐시에서 UID 찾기
+    uid = tg.get_uid_from_cache(zbx_to)
 
-# 2단계: 캐시에 없으면 API로 조회
-if not uid:
-    uid = tg.get_uid(zbx_to)  # Telegram API 호출
-    tmp_need_update = True    # 캐시 업데이트 필요 표시
+    # 2단계: 캐시에 없으면 API로 조회
+    if not uid:
+        uid = tg.get_uid(zbx_to)  # Telegram API 호출
+        tmp_need_update = True    # 캐시 업데이트 필요 표시
 
-# 3단계: 새로 찾은 UID를 캐시에 저장
-if tmp_need_update:
-    tg.update_cache_uid(zbx_to, str(uid).rstrip())
+    # 3단계: 새로 찾은 UID를 캐시에 저장
+    if tmp_need_update:
+        tg.update_cache_uid(zbx_to, str(uid).rstrip())
 
-⚠️ 캐시 문제가 생기는 경우
+    ⚠️ 캐시 문제가 생기는 경우
 
-1. 권한 문제:
-# 캐시 폴더가 root 소유여서 zabbix가 쓸 수 없음
-drwxr-xr-x.  2 root   root     80 Jan  2 07:31 /tmp/zbxtg/
+    1. 권한 문제:
+    # 캐시 폴더가 root 소유여서 zabbix가 쓸 수 없음
+    drwxr-xr-x.  2 root   root     80 Jan  2 07:31 /tmp/zbxtg/
 
-2. 파일 누락:
-# uids.txt가 없으면 캐시를 읽을 수 없음
-ls: cannot access '/tmp/zbxtg/uids.txt': No such file or directory
+    2. 파일 누락:
+    # uids.txt가 없으면 캐시를 읽을 수 없음
+    ls: cannot access '/tmp/zbxtg/uids.txt': No such file or directory
 
-3. 캐시 데이터 불일치:
-# 채널 ID가 바뀌었는데 캐시에는 옛날 정보
-# 또는 봇이 채널에서 제거되었는데 캐시에는 남아있음
+    3. 캐시 데이터 불일치:
+    # 채널 ID가 바뀌었는데 캐시에는 옛날 정보
+    # 또는 봇이 채널에서 제거되었는데 캐시에는 남아있음
 
-🛠️ 캐시 문제 해결법
+    🛠️ 캐시 문제 해결법
 
-캐시 초기화:
-# 모든 캐시 삭제 후 재생성
-sudo rm -rf /tmp/zbxtg/*
-sudo mkdir -p /tmp/zbxtg
-sudo chown -R zabbix:zabbix /tmp/zbxtg
-sudo chmod 755 /tmp/zbxtg
+    캐시 초기화:
+    # 모든 캐시 삭제 후 재생성
+    sudo rm -rf /tmp/zbxtg/*
+    sudo mkdir -p /tmp/zbxtg
+    sudo chown -R zabbix:zabbix /tmp/zbxtg
+    sudo chmod 755 /tmp/zbxtg
 
-수동 캐시 생성:
-# uids.txt에 직접 추가
-echo "customer-alert;channel;-1003682743283" >> /tmp/zbxtg/uids.txt
-echo "758619717;private;758619717" >> /tmp/zbxtg/uids.txt
+    수동 캐시 생성:
+    # uids.txt에 직접 추가
+    echo "customer-alert;channel;-1003682743283" >> /tmp/zbxtg/uids.txt
+    echo "758619717;private;758619717" >> /tmp/zbxtg/uids.txt
 
-디버그 모드로 캐시 동작 확인:
-sudo -u zabbix ./zbxtg.py "-1003682743283" "캐시 테스트" "메시지" --channel --debug
+    디버그 모드로 캐시 동작 확인:
+    sudo -u zabbix ./zbxtg.py "-1003682743283" "캐시 테스트" "메시지" --channel --debug
 
