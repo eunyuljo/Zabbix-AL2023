@@ -1,4 +1,3 @@
-(venv) [root@ip-10-0-1-156 jinjuham]# cat ./README.md 
 # 이해를 위한 예시
 
 ## 기능
