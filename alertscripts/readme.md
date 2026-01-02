@@ -3,7 +3,7 @@
 ## 기능
 
 - **개인 알림:** `<<personal_chat_id>>`로 그래프가 포함된 직접 메시지
-- **채널 알림:** `jinjuham-alert` 채널로 그래프가 포함된 브로드캐스트 알림
+- **채널 알림:** `customer-alert` 채널로 그래프가 포함된 브로드캐스트 알림
 - **그래프 통합:** 자동 Zabbix 그래프 생성 및 전송
 - **단일 봇 아키텍처:** 하나의 봇이 모든 대상을 처리
 
@@ -12,13 +12,13 @@
 - **토큰:** `<<bot_token>>`
 - **개인 채팅 ID:** `<<personal_chat_id>>`
 - **채널 ID:** `-<<chat_id>>`
-- **채널명:** `jinjuham-alert`
+- **채널명:** `customer-alert`
 
 ## ⚙️ 설정
 
 ### zbxtg_settings.py
 
-진주햄용으로 구성된 주요 설정:
+주요 설정:
 
 ```python
 # 봇 설정
@@ -30,7 +30,7 @@ zbx_api_user = "Admin"
 zbx_api_pass = "zabbix"
 
 # 채널 권한
-zbx_tg_daemon_enabled_chats = ["jinjuham-alert"]
+zbx_tg_daemon_enabled_chats = ["customer-alert"]
 zbx_tg_daemon_enabled_ids = [-<<chat_id>>]
 ```
 
@@ -56,9 +56,9 @@ zbxtg;title:지난 1시간 CPU 성능"
 ## 🔧 Zabbix 미디어 타입 설정
 
 **미디어 타입 구성:**
-- **이름:** `진주햄 텔레그램`
+- **이름:** `고객사 텔레그램`
 - **타입:** `스크립트`
-- **스크립트 이름:** `jinjuham/zbxtg.py`
+- **스크립트 이름:** `customer/zbxtg.py`
 - **스크립트 매개변수:**
   1. `{ALERT.SENDTO}`
   2. `{ALERT.SUBJECT}`
@@ -135,8 +135,8 @@ zbxtg;graphs_height:300
 ls -la /var/lib/zabbix/zbxtg/venv/
 
 # 권한 설정
-sudo chown -R zabbix:zabbix /usr/lib/zabbix/alertscripts/jinjuham/
-sudo chmod +x /usr/lib/zabbix/alertscripts/jinjuham/zbxtg.py
+sudo chown -R zabbix:zabbix /usr/lib/zabbix/alertscripts/customer/
+sudo chmod +x /usr/lib/zabbix/alertscripts/customer/zbxtg.py
 
 # 캐시 디렉토리 생성
 sudo mkdir -p /tmp/zbxtg
@@ -146,7 +146,7 @@ sudo chown zabbix:zabbix /tmp/zbxtg
 ### 설정 업데이트
 ```bash
 # 설정 파일 편집
-sudo nano jinjuham/zbxtg_settings.py
+sudo nano customer/zbxtg_settings.py
 
 # 구성 테스트
 sudo -u zabbix python3 -c "import zbxtg_settings; print('설정 로드 성공')"
@@ -157,12 +157,12 @@ sudo -u zabbix python3 -c "import zbxtg_settings; print('설정 로드 성공')"
   1. /tmp/zbxtg/uids.txt - 메인 UID 캐시
   포맷: 사용자명;타입;채팅ID
   예시:
-  jinjuham-alert;channel;-1003682743283
+  customer-alert;channel;-1003682743283
   myusername;private;758619717
 
   2. /tmp/zbxtg/cache_-1003682743283 - 개별 채널 캐시
   포맷: 채널명;타입;채팅ID
-  내용: jinjuham-alert;channel;-1003682743283
+  내용: customer-alert;channel;-1003682743283
 
 zbxtg.py의 캐시 로직 (zbxtg.py:805-817)
 
@@ -203,7 +203,7 @@ sudo chmod 755 /tmp/zbxtg
 
 수동 캐시 생성:
 # uids.txt에 직접 추가
-echo "jinjuham-alert;channel;-1003682743283" >> /tmp/zbxtg/uids.txt
+echo "customer-alert;channel;-1003682743283" >> /tmp/zbxtg/uids.txt
 echo "758619717;private;758619717" >> /tmp/zbxtg/uids.txt
 
 디버그 모드로 캐시 동작 확인:
