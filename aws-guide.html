@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS CloudWatch Zabbix 모니터링 가이드</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c5282;
+            border-bottom: 2px solid #2c5282;
+            padding-bottom: 5px;
+        }
+        h2 {
+            color: #2d3748;
+            margin-top: 25px;
+        }
+        h3 {
+            color: #4a5568;
+            margin-top: 20px;
+        }
+        .service-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .service-item {
+            background: #fff;
+            padding: 12px;
+            border-left: 3px solid #3182ce;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .macro-table {
+            background: #fff;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .macro-table th, .macro-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        .macro-table th {
+            background: #edf2f7;
+            font-weight: bold;
+        }
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .warning {
+            background: #fff5cd;
+            border-left: 4px solid #d69e2e;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .step {
+            background: #fff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .metric-section {
+            background: #f7fafc;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 AWS CloudWatch Zabbix 모니터링 가이드</h1>
+
+    <h2>📊 지원하는 AWS 서비스 (19개)</h2>
+    <div class="service-list">
+        <div class="service-item"><strong>EC2</strong><br>CPU, 네트워크, 디스크, 상태체크</div>
+        <div class="service-item"><strong>ALB</strong><br>로드밸런서, 타겟그룹 메트릭</div>
+        <div class="service-item"><strong>NLB</strong><br>네트워크 로드밸런서</div>
+        <div class="service-item"><strong>RDS</strong><br>데이터베이스 인스턴스</div>
+        <div class="service-item"><strong>Aurora</strong><br>클러스터, 인스턴스</div>
+        <div class="service-item"><strong>Lambda</strong><br>서버리스 함수</div>
+        <div class="service-item"><strong>S3</strong><br>버킷, 요청 메트릭</div>
+        <div class="service-item"><strong>DynamoDB</strong><br>테이블, 인덱스</div>
+        <div class="service-item"><strong>ElastiCache</strong><br>Redis/Memcached</div>
+        <div class="service-item"><strong>ECS</strong><br>컨테이너 클러스터, 서비스</div>
+        <div class="service-item"><strong>EKS</strong><br>쿠버네티스 클러스터</div>
+        <div class="service-item"><strong>CloudFront</strong><br>CDN 배포</div>
+        <div class="service-item"><strong>API Gateway</strong><br>API 엔드포인트</div>
+        <div class="service-item"><strong>EFS</strong><br>파일 시스템</div>
+        <div class="service-item"><strong>NAT Gateway</strong><br>네트워크 게이트웨이</div>
+        <div class="service-item"><strong>VPN S2S</strong><br>Site-to-Site VPN</div>
+        <div class="service-item"><strong>Direct Connect</strong><br>전용선 연결</div>
+        <div class="service-item"><strong>Transit Gateway</strong><br>네트워크 허브</div>
+        <div class="service-item"><strong>AWS Backup</strong><br>백업 서비스</div>
+    </div>
+
+    <div class="step">
+        <h2>⚙️ 1단계: AWS 계정 설정</h2>
+        <table class="macro-table">
+            <tr><th>매크로</th><th>설명</th><th>예시 값</th></tr>
+            <tr><td>{$ACCOUNT_ID}</td><td>AWS 계정 ID</td><td>123456789012</td></tr>
+            <tr><td>{$REGION}</td><td>AWS 리전</td><td>ap-northeast-2</td></tr>
+            <tr><td>{$ROLE_ARN}</td><td>IAM 역할 ARN</td><td>arn:aws:iam::123456789012:role/ZabbixMonitoringRole</td></tr>
+        </table>
+    </div>
+
+    <div class="step">
+        <h2>🔧 2단계: 템플릿 Import</h2>
+        <div class="code">Configuration → Templates → Import<br>→ XML 파일 업로드 → Import</div>
+    </div>
+
+    <div class="step">
+        <h2>🖥️ 3단계: 호스트 생성 및 설정</h2>
+        <div class="code">Configuration → Hosts → Create host<br><br>1. Host name: AWS-EC2-Production<br>2. Templates 탭: 해당 AWS 서비스 템플릿 선택<br>3. Macros 탭: 서비스별 ID 입력<br><br>주요 매크로들:<br>• EC2: {$INSTANCE_ID} = i-0123456789abcdef0<br>• ALB: {$ALB_NAME} = my-alb-name<br>• RDS: {$DB_INSTANCE_ID} = my-db-instance<br>• Lambda: {$FUNCTION_NAME} = my-lambda-function<br>• S3: {$BUCKET_NAME} = my-s3-bucket</div>
+    </div>
+
+    <div class="step">
+        <h2>📈 4단계: 주요 메트릭 확인</h2>
+
+        <div class="metric-section">
+            <h3>EC2 인스턴스</h3>
+            <ul>
+                <li>CPU 사용률 (80% 경고, 90% 위험)</li>
+                <li>네트워크 In/Out</li>
+                <li>디스크 Read/Write</li>
+                <li>상태 체크 실패</li>
+            </ul>
+        </div>
+
+        <div class="metric-section">
+            <h3>RDS/Aurora</h3>
+            <ul>
+                <li>CPU 사용률, 데이터베이스 연결 수</li>
+                <li>메모리 사용량, 스토리지 여유공간</li>
+                <li>읽기/쓰기 지연시간 및 IOPS</li>
+                <li>Aurora: 복제 지연시간</li>
+            </ul>
+        </div>
+
+        <div class="metric-section">
+            <h3>Lambda 함수</h3>
+            <ul>
+                <li>실행 시간 (30초 초과 경고)</li>
+                <li>호출 횟수, 에러 발생 횟수</li>
+                <li>스로틀링, Dead Letter Queue 에러</li>
+                <li>동시 실행 수</li>
+            </ul>
+        </div>
+
+        <div class="metric-section">
+            <h3>ElastiCache</h3>
+            <ul>
+                <li>캐시 히트/미스율 (20% 미스율 경고)</li>
+                <li>CPU 사용률, 메모리 사용률</li>
+                <li>네트워크 트래픽, 클라이언트 연결수</li>
+                <li>Redis: 복제 지연시간</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ 중요 사항</strong><br>
+        • 각 호스트마다 해당 서비스의 정확한 리소스 ID를 입력해야 합니다<br>
+        • CloudFront는 us-east-1 리전을 사용해야 합니다 (글로벌 서비스)<br>
+        • IAM 역할에 CloudWatch 읽기 권한이 필요합니다
+    </div>
+
+    <div class="step">
+        <h2>🔍 5단계: 문제 해결</h2>
+        <h3>메트릭이 수집되지 않는 경우:</h3>
+        <ol>
+            <li><strong>AWS IAM 권한 확인</strong> - CloudWatch 읽기 권한</li>
+            <li><strong>매크로 값 확인</strong> - Account ID, Region, Resource ID</li>
+            <li><strong>External script 권한 확인</strong> - zabbix 사용자 실행 권한</li>
+            <li><strong>Zabbix server 로그 확인</strong></li>
+        </ol>
+
+        <div class="code">
+# 로그 확인<br>
+tail -f /var/log/zabbix/zabbix_server.log<br><br>
+
+# External script 수동 실행 테스트<br>
+sudo -u zabbix /usr/lib/zabbix/externalscripts/aws-cloudwatch-metric \<br>
+&nbsp;&nbsp;123456789012 \<br>
+&nbsp;&nbsp;ap-northeast-2 \<br>
+&nbsp;&nbsp;AWS/EC2 \<br>
+&nbsp;&nbsp;CPUUtilization \<br>
+&nbsp;&nbsp;Average \<br>
+&nbsp;&nbsp;"Name=InstanceId,Value=i-0123456789abcdef0" \<br>
+&nbsp;&nbsp;"arn:aws:iam::123456789012:role/ZabbixMonitoringRole"
+        </div>
+    </div>
+
+    <p style="text-align:center;margin-top:30px;color:#718096;">
+        📚 <strong>Megazone AWS CloudWatch Templates</strong><br>
+        19개 AWS 서비스 종합 모니터링 솔루션
+    </p>
+</body>
+</html>
