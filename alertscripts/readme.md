@@ -157,12 +157,12 @@ sudo -u zabbix python3 -c "import zbxtg_settings; print('설정 로드 성공')"
   1. /tmp/zbxtg/uids.txt - 메인 UID 캐시
   포맷: 사용자명;타입;채팅ID
   예시:
-  customer-alert;channel;-1003682743283
-  myusername;private;758619717
+  customer-alert;channel;-<<chat_id>>
+  myusername;private;personal_chat_id
 
-  2. /tmp/zbxtg/cache_-1003682743283 - 개별 채널 캐시
+  2. /tmp/zbxtg/cache_-<<chat_id>> - 개별 채널 캐시
   포맷: 채널명;타입;채팅ID
-  내용: customer-alert;channel;-1003682743283
+  내용: customer-alert;channel;-<<chat_id>>
 
     zbxtg.py의 캐시 로직 (zbxtg.py:805-817)
 
@@ -203,9 +203,9 @@ sudo -u zabbix python3 -c "import zbxtg_settings; print('설정 로드 성공')"
 
     수동 캐시 생성:
     # uids.txt에 직접 추가
-    echo "customer-alert;channel;-1003682743283" >> /tmp/zbxtg/uids.txt
-    echo "758619717;private;758619717" >> /tmp/zbxtg/uids.txt
+    echo "customer-alert;channel;-<<chat_id>>" >> /tmp/zbxtg/uids.txt
+    echo "<<personal_chat_id">>;private;<<personal_chat_id">> >> /tmp/zbxtg/uids.txt
 
     디버그 모드로 캐시 동작 확인:
-    sudo -u zabbix ./zbxtg.py "-1003682743283" "캐시 테스트" "메시지" --channel --debug
+    sudo -u zabbix ./zbxtg.py "-<<chat_id>>" "캐시 테스트" "메시지" --channel --debug
 
